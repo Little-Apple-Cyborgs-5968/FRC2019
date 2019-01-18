@@ -1,0 +1,6 @@
+public enum DriveMode {
+    DRIVERCONTROL,
+    AUTODRIVINGTRAIGHT,
+    AUTOROTATING,
+    LINEALIGNMENT
+}
