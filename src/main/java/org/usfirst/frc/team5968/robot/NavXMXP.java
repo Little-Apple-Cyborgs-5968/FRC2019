@@ -1,3 +1,5 @@
+package org.usfirst.frc.team5968.robot; 
+
 import com.kauailabs.navx.frc.AHRS;
 
 public class NavXMXP implements IGyroscopeSensor {
@@ -21,11 +23,6 @@ public class NavXMXP implements IGyroscopeSensor {
     @Override
     public double getYaw() {
         return navX.getYaw();
-    }
-
-    @Override
-    public void resetYaw() {
-        navX.reset();
     }
 
 }
