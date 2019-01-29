@@ -3,8 +3,7 @@ package org.usfirst.frc.team5968.robot;
 public class PortMap {
     
     public enum USB {
-        LEFT, 
-        RIGHT
+        XBOXCONTROLLER
     }
     
     public enum CAN {
@@ -14,16 +13,14 @@ public class PortMap {
         RIGHT_MOTOR_CONTROLLER_FOLLOW,
         MIDDLE_MOTOR_CONTROLLER_LEAD,
         MIDDLE_MOTOR_CONTROLLER_FOLLOW,
-        LIFT_MOTOR_CONTROLLER,
+        CONVEYER_MOTOR_CONTROLLER,
         PCM
     }
     
     public static int portOf(USB usbDevice) {
         switch(usbDevice) {
-        case LEFT:
+        case XBOXCONTROLLER:
             return 0;
-        case RIGHT:
-            return 1;
         default:
             return -1;
         }
@@ -33,13 +30,13 @@ public class PortMap {
         switch(canDevice) {
         case LEFT_MOTOR_CONTROLLER_LEAD:
             return 2;
-        case LEFT_MOTOR_CONTROLLER_FOLLOWER:
+        case LEFT_MOTOR_CONTROLLER_FOLLOW:
             return 3;
         case RIGHT_MOTOR_CONTROLLER_LEAD:
             return 4;
-        case RIGHT_MOTOR_CONTROLLER_FOLLOWER:
+        case RIGHT_MOTOR_CONTROLLER_FOLLOW:
             return 5;
-        case LIFT_MOTOR_CONTROLLER: 
+        case CONVEYER_MOTOR_CONTROLLER: 
             return 1;
         case PCM:
             return 0;
