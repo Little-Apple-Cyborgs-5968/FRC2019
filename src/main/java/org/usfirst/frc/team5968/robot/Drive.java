@@ -46,23 +46,20 @@ public class Drive implements IDrive {
         middleMotorControllerFollow.follow(middleMotorControllerLead);
     
     }
-
-    @Override
-    private void setRobotSpeed(){
+    
+    private void getRobotSpeed(){
 
         robotSpeed = Math.sqrt(Math.pow(xleftJoystick, 2) + Math.pow(yleftJoystick, 2));
 
     }
 
-    @Override
     private void getRobotAngle(){
 
         robotAngle = navX.getYaw();
 
     }
 
-    @Override
-    private void robotDriveAngle(){
+    private void setRobotDriveAngle(){
 
         xleftJoystick = xbox.getX(kLeft);
         yleftJoystick = xbox.getY(kRight);
@@ -72,8 +69,7 @@ public class Drive implements IDrive {
         robotYDriveDirection = Math.tan(robotDriveAngle) / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
 
     }
-
-    @Override
+    
     private void setRobotSpeed(){
 
         leftMotorControllerLead.set(robotSpeed * robotYDriveDirection);
@@ -82,4 +78,36 @@ public class Drive implements IDrive {
 
     }
 
-}
+    @Override
+    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
+    }
+
+    @Override
+    public void rotateDegrees(double angle, double angularSpeed) {
+    }
+    
+    @Override
+    public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine) {
+    }
+    
+    @Override
+    public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine) {
+    }
+    
+    @Override
+    public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {
+    }
+    
+    @Override
+    public void init() {
+    }
+    
+    @Override 
+    public void periodic(){
+        getRobotAngle();
+        getRobotSpeed(); 
+        setRobotDriveAngle();
+        setRobotSpeed(); 
+    }
+         
+   
