@@ -33,11 +33,11 @@ public class PortMap {
         switch(canDevice) {
         case LEFT_MOTOR_CONTROLLER_LEAD:
             return 2;
-        case LEFT_MOTOR_CONTROLLER_FOLLOW:
+        case LEFT_MOTOR_CONTROLLER_FOLLOWER:
             return 3;
         case RIGHT_MOTOR_CONTROLLER_LEAD:
             return 4;
-        case RIGHT_MOTOR_CONTROLLER_FOLLOW:
+        case RIGHT_MOTOR_CONTROLLER_FOLLOWER:
             return 5;
         case LAUNCHER_MOTOR_CONTROLLER: 
             return 1;
