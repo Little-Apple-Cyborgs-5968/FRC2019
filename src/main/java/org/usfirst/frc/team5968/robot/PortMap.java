@@ -43,6 +43,10 @@ public class PortMap {
             return 1;
         case PCM:
             return 0;
+        case MIDDLE_MOTOR_CONTROLLER_LEAD:
+            return 6;
+        case MIDDLE_MOTOR_CONTROLLER_FOLLOW:
+            return 7;
         default:
             return -1;
         }
