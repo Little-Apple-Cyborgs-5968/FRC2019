@@ -8,4 +8,5 @@ public interface IGyroscopeSensor {
 
     public double getYaw();
     
+    public void resetYaw();
 }
