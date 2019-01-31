@@ -1,22 +1,24 @@
-package org.usfirst.frc.team5968.robot;
+package org.usfirst.frc.team5968.robot; 
 
-public class AutonomousMode implements IRobotMode{
+public class AutonomousMode implements IRobotMode {
 
-    private IDrive drive;
+    private IDrive drive; 
     private IHook hook;
-    private ILauncher launcher;
 
-    public AutonomousMode(IDrive drive, IHook hook, ILauncher launcher) {
+    public AutonomousMode(IDrive drive, IHook hook) {
+
         this.drive = drive;
-        this.hook = hook;
-        this.launcher = launcher;
-    }
-
-    public void init(){
+        this.hook = hook; 
 
     }
 
-    public void periodic(){
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void periodic() {
 
     }
 }
