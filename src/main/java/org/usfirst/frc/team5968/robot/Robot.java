@@ -12,9 +12,17 @@ public class Robot extends RobotBase {
     private IRobotMode teleoperatedMode;
     
     private IDrive drive;
+    private IHook hook;
+    private ILauncher launcher;
     
     public Robot() {
-    
+        drive = new Drive();
+        hook = new Hook();
+        launcher = new Launcher();
+
+        disabledMode = new DisabledMode(hook, launcher);
+        autonomousMode = new AutonomousMode(drive, hook, launcher);
+        teleoperatedMode = new TeleoperatedMode(drive, hook, launcher);
     }
     
     @Override
@@ -44,6 +52,7 @@ public class Robot extends RobotBase {
         drive.init();
    
     }
+    
     private void doPeripheralPeriodicProcessing() {
       
         drive.periodic();

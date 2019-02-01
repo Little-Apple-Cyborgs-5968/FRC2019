@@ -2,10 +2,13 @@ package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.SerialPort;
+
+import com.kauailabs.navx.frc.AHRS;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 import org.usfirst.frc.team5968.robot.PortMap.CAN;
 import org.usfirst.frc.team5968.robot.PortMap.USB;
@@ -35,6 +38,7 @@ public class Drive implements IDrive {
     public Drive(){
 
         xbox = new XboxController(PortMap.portOf(USB.XBOXCONTROLLER));
+        navX = new NavXMXP(new AHRS(SerialPort.Port.kMXP));
 
         leftMotorControllerLead = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER_LEAD));
         leftMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER_FOLLOW));
@@ -48,10 +52,12 @@ public class Drive implements IDrive {
         middleMotorControllerFollow.follow(middleMotorControllerLead);
     
     }
+
     @Override
     public DriveMode getCurrentDriveMode(){
         return driveMode;
     }
+    
     private void getRobotSpeed(){
 
         robotSpeed = Math.sqrt(Math.pow(xleftJoystick, 2) + Math.pow(yleftJoystick, 2));
@@ -59,9 +65,8 @@ public class Drive implements IDrive {
     }
 
     private double getRobotAngle(){
-
+        
         return navX.getYaw();
-
     }
 
     private void setRobotDriveAngle(){
@@ -109,11 +114,10 @@ public class Drive implements IDrive {
     
     @Override 
     public void periodic(){
-        getRobotAngle();
-        getRobotSpeed(); 
-        setRobotDriveAngle();
-        setRobotSpeed(); 
+        //getRobotAngle();
+        //getRobotSpeed(); 
+        //setRobotDriveAngle();
+        //setRobotSpeed(); 
     }
-         
-   
+        
 }
