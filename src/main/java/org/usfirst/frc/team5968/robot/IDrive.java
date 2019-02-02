@@ -25,7 +25,8 @@ public interface IDrive {
      * This is the method used to drive manually during teleoperated mode
      */
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed);
-    
+
+    public void lookAt(double angle);
 
     public void init();
     
