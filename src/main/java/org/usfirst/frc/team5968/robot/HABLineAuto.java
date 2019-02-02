@@ -15,7 +15,6 @@ public class HABLineAuto implements IRobotMode {
         this.drive = drive; 
 
     }
-}
 
 @Override
 public void init() {
@@ -46,4 +45,6 @@ private boolean crossedLine() {
     // checks whether robot has crossed line.
         // returns false if visual sensor detects carpet
         // returns true if visual sensor detects HAB line
+}
+
 }

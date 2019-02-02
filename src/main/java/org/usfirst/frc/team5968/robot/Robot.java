@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.SerialPort;
+
+import com.kauailabs.navx.frc.AHRS;
 
 public class Robot extends RobotBase {
     
@@ -14,15 +17,19 @@ public class Robot extends RobotBase {
     private IDrive drive;
     private IHook hook;
     private ILauncher launcher;
+    private IGyroscopeSensor gyroscope;  
     
     public Robot() {
-        drive = new Drive();
+        drive = new Drive(gyroscope);
         hook = new Hook();
         launcher = new Launcher();
 
         disabledMode = new DisabledMode(hook, launcher);
-        autonomousMode = new AutonomousMode(drive, hook, launcher);
+        autonomousMode = new AutonomousMode(drive, hook);
         teleoperatedMode = new TeleoperatedMode(drive, hook, launcher);
+        
+        IGyroscopeSensor gyroscope = new NavXMXP(new AHRS(SerialPort.Port.kMXP));
+
     }
     
     @Override
