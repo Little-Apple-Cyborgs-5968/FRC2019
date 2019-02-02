@@ -9,7 +9,6 @@ public class HABLineAuto implements IRobotMode {
         this.drive = drive; 
 
     }
-}
 
 @Override
 public void init() {
@@ -25,5 +24,7 @@ public void periodic() {
 
 //crosses HAB line
 public void driveStraight() {
+
+}
 
 }
