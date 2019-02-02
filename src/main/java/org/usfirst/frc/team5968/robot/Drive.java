@@ -1,11 +1,8 @@
 package org.usfirst.frc.team5968.robot; 
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SerialPort;
-
-import com.kauailabs.navx.frc.AHRS;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -15,8 +12,7 @@ import org.usfirst.frc.team5968.robot.PortMap.USB;
 
 public class Drive implements IDrive {
 
-    private GenericHID xbox;
-    private NavXMXP navX;
+    private IGyroscopeSensor gyroscope;
     private DriveMode driveMode;
 
     private TalonSRX leftMotorControllerLead;
@@ -26,19 +22,20 @@ public class Drive implements IDrive {
     private TalonSRX middleMotorControllerLead;
     private TalonSRX middleMotorControllerFollow;
 
+    private Runnable currentCompletionRoutine; 
+
     private double xleftJoystick;
     private double yleftJoystick;
     private double robotAngle;
-    private double joyStickAngle;
+    private double fieldDriveAngle;
     private double robotDriveAngle;
     private double robotXDriveDirection;
     private double robotYDriveDirection;
     private double robotSpeed;
 
-    public Drive(){
+    public Drive(IGyroscopeSensor gyroscope){
 
-        xbox = new XboxController(PortMap.portOf(USB.XBOXCONTROLLER));
-        navX = new NavXMXP(new AHRS(SerialPort.Port.kMXP));
+        this.gyroscope = gyroscope;  
 
         leftMotorControllerLead = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER_LEAD));
         leftMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.LEFT_MOTOR_CONTROLLER_FOLLOW));
@@ -66,21 +63,22 @@ public class Drive implements IDrive {
 
     private double getRobotAngle(){
         
-        return navX.getYaw();
+        return gyroscope.getYaw();
     }
 
-    private void setRobotDriveAngle(){
-
-        xleftJoystick = xbox.getX(Hand.kLeft);
-        yleftJoystick = xbox.getY(Hand.kRight);
-        joyStickAngle = Math.atan(xleftJoystick / yleftJoystick);
-        robotDriveAngle = joyStickAngle + robotAngle;    //angle relative to robot
-        robotXDriveDirection = 1 / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
-        robotYDriveDirection = Math.tan(robotDriveAngle) / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
-
-    }
     
-    private void setRobotSpeed(){
+    private void setRobotDriveAngle(xleftJoystick, yleftJoystick){
+
+        xleftJoystick = xboxController.getY(Hand.kLeft);
+        yleftJoystick = xboxController.getY(Hand.kLeft);
+        fieldDriveAngle = Math.atan(xleftJoystick / yleftJoystick);
+        robotDriveAngle = fieldDriveAngle + robotAngle;    //angle relative to robot
+        //robotXDriveDirection = 1 / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
+        //robotYDriveDirection = Math.tan(robotDriveAngle) / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
+
+    } 
+    
+    private void setRobotSpeed(double robotXDriveDirection, double robotYDriveDirection){
 
         leftMotorControllerLead.set(ControlMode.PercentOutput, robotSpeed * robotYDriveDirection);
         rightMotorControllerLead.set(ControlMode.PercentOutput, robotSpeed * robotYDriveDirection);
@@ -90,34 +88,82 @@ public class Drive implements IDrive {
 
     @Override
     public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
+
     }
 
     @Override
     public void rotateDegrees(double angle, double angularSpeed) {
+
     }
     
     @Override
     public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine) {
+    
+        setCompletionRoutine(completionRoutine); 
+
     }
+
     
     @Override
     public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine) {
+
     }
     
     @Override
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {
+        
+        setCompletionRoutine(null); 
+        driveManualImplementation(xDirectionSpeed, yDirectionSpeed); 
+        
+    }
+
+    private void driveManualImplementation(double xDirectionSpeed, double yDirectionSpeed) {
+       
+        driveMode = DriveMode.DRIVERCONTROL;
+        robotXDriveDirection = xDirectionSpeed;
+        robotYDriveDirection = yDirectionSpeed;
+
+    }
+
+    private void stop() {
+
+        driveManualImplementation(0.0, 0.0);
+
     }
     
+    @Override 
+    public void lookAt(double angle) {
+        
+    }
+
+    private void setCompletionRoutine(Runnable completionRountime) {
+        
+        if (currentCompletionRoutine != null) {
+            throw new IllegalStateException("Tried to perform a lift action while one was already in progress!");
+        }
+
+        currentCompletionRoutine = completionRountime;
+
+    }
+
     @Override
     public void init() {
+
+        currentCompletionRoutine = null;
+        stop();
+
     }
     
     @Override 
     public void periodic(){
-        //getRobotAngle();
-        //getRobotSpeed(); 
-        //setRobotDriveAngle();
-        //setRobotSpeed(); 
+
+        if (driveMode == DriveMode.DRIVERCONTROL) {
+            setRobotSpeed(0, 1); 
+        }
+    
+         xleftJoystick = 1 / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
+         yleftJoystick = Math.tan(robotDriveAngle) / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
+
     }
         
 }
