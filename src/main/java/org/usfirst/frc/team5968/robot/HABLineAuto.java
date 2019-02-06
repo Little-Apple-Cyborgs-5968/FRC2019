@@ -24,20 +24,16 @@ public class HABLineAuto implements IRobotMode {
 
     @Override
     public void periodic() {
-        if(crossedLine()) {
-            drive.driveDistance(0, robotSpeed, 12.0, completionRoutine); // add real completion routine later
-            robotSpeed = LOW;
-        }  
+        
     }
 
+   /** 
+   * Since all we really need to do is go straight cross the HAB line,
+   * there isn't any need for a sensor. Simply driving straight 48 inches
+   * will cross the HAB line with extra distance to spare.
+   */
     public void driveStraight() {
-        drive.driveManual(0, robotSpeed);
-    }
-
-    private boolean crossedLine() {
-        // checks whether robot has crossed line.
-            // returns false if visual sensor detects carpet
-            // returns true if visual sensor detects HAB line
+        drive.driveDistance(0, robotSpeed, 48.0, completionRoutine); // Add actual completion routine later
     }
 
 }
