@@ -1,13 +1,16 @@
 package org.usfirst.frc.team5968.robot;
 
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SerialPort;
 
 public class NavXMXP implements IGyroscopeSensor {
 
     private AHRS navX;
     
-    public NavXMXP(AHRS navX) {
-        navX = this.navX;
+    public NavXMXP() {
+        Debug.log("Start");
+        navX = new AHRS(SerialPort.Port.kUSB);
+        navX.reset();
     }
     
     @Override
