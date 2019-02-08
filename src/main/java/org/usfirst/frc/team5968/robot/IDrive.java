@@ -26,7 +26,7 @@ public interface IDrive {
      */
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed);
 
-    public void lookAt(double angle);
+    public void lookAt(double angle, double speed);
 
     public void init();
     
