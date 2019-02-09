@@ -6,7 +6,6 @@ public class AutonomousMode implements IRobotMode {
     private IHook hook;
 
     public AutonomousMode(IDrive drive, IHook hook) {
-
         this.drive = drive;
         this.hook = hook; 
 

@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5968.robot;
+/*package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
@@ -25,3 +25,4 @@ public class CargoGuide implements ICargoGuide {
     }
 
 }
+*/ 
