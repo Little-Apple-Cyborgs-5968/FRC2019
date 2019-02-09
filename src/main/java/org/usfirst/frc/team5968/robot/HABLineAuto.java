@@ -1,7 +1,5 @@
 package org.usfirst.frc.team5968.robot; 
 
-import org.usfirst.frc.team5968.Drive;
-
 public class HABLineAuto implements IRobotMode {
 
     private IDrive drive;
@@ -16,24 +14,34 @@ public class HABLineAuto implements IRobotMode {
         robotSpeed = LOW;
     }
 
-    @Override
-    public void init() {
-        robotSpeed = HIGH;
-        driveStraight(); 
-    }
+@Override
+public void init() {
+    robotSpeed = LOW;
+    driveStraight(); 
+    
+}
+
+@Override
+public void periodic() {
+    // Visual sensor checks whether or not robot has crossed HAB line
+    if(crossedLine()) {
+        // if true: go forward a bit more, then stop (to ensure robot has crossed line)
+        //drive.driveDistance(0, robotSpeed, 12.0, /* Runnable? */);
+        robotSpeed = LOW;
+    }  
+        // if false: keep going forward  
+}
 
     @Override
     public void periodic() {
         
     }
 
-   /** 
-   * Since all we really need to do is go straight cross the HAB line,
-   * there isn't any need for a sensor. Simply driving straight 48 inches
-   * will cross the HAB line with extra distance to spare.
-   */
-    public void driveStraight() {
-        drive.driveDistance(0, robotSpeed, 48.0, completionRoutine); // Add actual completion routine later
-    }
+private boolean crossedLine() {
+    // checks whether robot has crossed line.
+        // returns false if visual sensor detects carpet
+        // returns true if visual sensor detects HAB line
+        return false; 
+}
 
 }

@@ -1,14 +1,9 @@
 package org.usfirst.frc.team5968.robot; 
 
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.SerialPort;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import org.usfirst.frc.team5968.robot.PortMap.CAN;
-import org.usfirst.frc.team5968.robot.PortMap.USB;
 
 public class Drive implements IDrive {
 
@@ -23,15 +18,14 @@ public class Drive implements IDrive {
     private TalonSRX middleMotorControllerFollow;
 
     private Runnable currentCompletionRoutine; 
+   
+    private double xDirectionSpeed;
+    private double yDirectionSpeed;
+    private double desiredAngle;
+    private double rotationSpeed; 
 
-    private double xleftJoystick;
-    private double yleftJoystick;
-    private double robotAngle;
-    private double fieldDriveAngle;
-    private double robotDriveAngle;
-    private double robotXDriveDirection;
-    private double robotYDriveDirection;
-    private double robotSpeed;
+    private static final double ROTATION_SPEED_THRESHOLD = 0.00000001; 
+    private static final double DELTA_ANGLE_SPEED_POWER = 3; 
 
     public Drive(IGyroscopeSensor gyroscope){
 
@@ -44,6 +38,11 @@ public class Drive implements IDrive {
         middleMotorControllerLead = new TalonSRX(PortMap.portOf(CAN.MIDDLE_MOTOR_CONTROLLER_LEAD));
         middleMotorControllerFollow = new TalonSRX(PortMap.portOf(CAN.MIDDLE_MOTOR_CONTROLLER_FOLLOW));
 
+        leftMotorControllerFollow.setInverted(true);
+        leftMotorControllerLead.setInverted(true);
+        middleMotorControllerFollow.setInverted(true);
+        middleMotorControllerLead.setInverted(true);
+
         leftMotorControllerFollow.follow(leftMotorControllerLead);
         rightMotorControllerFollow.follow(rightMotorControllerLead);
         middleMotorControllerFollow.follow(middleMotorControllerLead);
@@ -53,37 +52,6 @@ public class Drive implements IDrive {
     @Override
     public DriveMode getCurrentDriveMode(){
         return driveMode;
-    }
-    
-    private void getRobotSpeed(){
-
-        robotSpeed = Math.sqrt(Math.pow(xleftJoystick, 2) + Math.pow(yleftJoystick, 2));
-
-    }
-
-    private double getRobotAngle(){
-        
-        return gyroscope.getYaw();
-    }
-
-    
-    private void setRobotDriveAngle(xleftJoystick, yleftJoystick){
-
-        xleftJoystick = xboxController.getY(Hand.kLeft);
-        yleftJoystick = xboxController.getY(Hand.kLeft);
-        fieldDriveAngle = Math.atan(xleftJoystick / yleftJoystick);
-        robotDriveAngle = fieldDriveAngle + robotAngle;    //angle relative to robot
-        //robotXDriveDirection = 1 / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
-        //robotYDriveDirection = Math.tan(robotDriveAngle) / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
-
-    } 
-    
-    private void setRobotSpeed(double robotXDriveDirection, double robotYDriveDirection){
-
-        leftMotorControllerLead.set(ControlMode.PercentOutput, robotSpeed * robotYDriveDirection);
-        rightMotorControllerLead.set(ControlMode.PercentOutput, robotSpeed * robotYDriveDirection);
-        middleMotorControllerLead.set(ControlMode.PercentOutput, robotSpeed * robotXDriveDirection);
-
     }
 
     @Override
@@ -98,11 +66,9 @@ public class Drive implements IDrive {
     
     @Override
     public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine) {
-    
         setCompletionRoutine(completionRoutine); 
 
     }
-
     
     @Override
     public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine) {
@@ -111,33 +77,32 @@ public class Drive implements IDrive {
     
     @Override
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {
-        
         setCompletionRoutine(null); 
         driveManualImplementation(xDirectionSpeed, yDirectionSpeed); 
         
     }
 
     private void driveManualImplementation(double xDirectionSpeed, double yDirectionSpeed) {
-       
+        this.xDirectionSpeed = xDirectionSpeed;
+        this.yDirectionSpeed = yDirectionSpeed; 
         driveMode = DriveMode.DRIVERCONTROL;
-        robotXDriveDirection = xDirectionSpeed;
-        robotYDriveDirection = yDirectionSpeed;
 
     }
 
     private void stop() {
-
         driveManualImplementation(0.0, 0.0);
 
     }
     
     @Override 
-    public void lookAt(double angle) {
-        
+    public void lookAt(double angle, double speed) {
+        setCompletionRoutine(null);
+        desiredAngle = MathUtilities.normalizeAngle(angle);
+        rotationSpeed = speed; 
+
     }
 
     private void setCompletionRoutine(Runnable completionRountime) {
-        
         if (currentCompletionRoutine != null) {
             throw new IllegalStateException("Tried to perform a lift action while one was already in progress!");
         }
@@ -148,22 +113,58 @@ public class Drive implements IDrive {
 
     @Override
     public void init() {
-
         currentCompletionRoutine = null;
         stop();
 
     }
     
     @Override 
-    public void periodic(){
+    public void periodic() {
+        double leftSpeed;
+        double rightSpeed;
+        double middleSpeed;
 
-        if (driveMode == DriveMode.DRIVERCONTROL) {
-            setRobotSpeed(0, 1); 
+        // Linear Motion
+        double fieldAngle = Math.atan2(yDirectionSpeed, xDirectionSpeed); 
+        double robotDriveAngle = fieldAngle + gyroscope.getYaw(); 
+
+        double speedMagnitude = Math.sqrt(Math.pow(xDirectionSpeed, 2) + Math.pow(yDirectionSpeed, 2)); 
+        leftSpeed = Math.cos(robotDriveAngle) * speedMagnitude;
+        rightSpeed = leftSpeed; 
+        middleSpeed = Math.sin(robotDriveAngle) * speedMagnitude; 
+
+        // Angular Motion
+
+        if (rotationSpeed > ROTATION_SPEED_THRESHOLD) {
+            double deltaAngle = gyroscope.getYaw() - desiredAngle; 
+
+            if (Math.abs(deltaAngle) > Math.PI) {
+                deltaAngle -= (Math.PI * 2) * Math.signum(deltaAngle); 
+            }
+
+            double actualSpeed = rotationSpeed * Math.pow(Math.abs(deltaAngle) / Math.PI, DELTA_ANGLE_SPEED_POWER); 
+            leftSpeed *= 1 - actualSpeed; 
+            rightSpeed *= 1 - actualSpeed; 
+
+            if (deltaAngle < 0) {
+                leftSpeed += rotationSpeed;
+                rightSpeed -= rotationSpeed;
+            }
+            else {
+                leftSpeed -= rotationSpeed;
+                rightSpeed += rotationSpeed;
+            }
+
+            Debug.periodic(); 
+            //Debug.logPeriodic(gyroscope.getYaw());  
+            //Debug.logPeriodic(robotDriveAngle);  
+            //Debug.logPeriodic(actualSpeed);  
+
         }
-    
-         xleftJoystick = 1 / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
-         yleftJoystick = Math.tan(robotDriveAngle) / Math.sqrt(1 + Math.pow(Math.tan(robotDriveAngle), 2));
 
+        // Set Motor Speeds
+        leftMotorControllerLead.set(ControlMode.PercentOutput, leftSpeed);
+        rightMotorControllerFollow.set(ControlMode.PercentOutput, rightSpeed);
+        middleMotorControllerFollow.set(ControlMode.PercentOutput, middleSpeed);
     }
-        
 }
