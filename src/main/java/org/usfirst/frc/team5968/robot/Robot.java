@@ -20,7 +20,7 @@ public class Robot extends RobotBase {
     private ILauncher launcher;
     private IGyroscopeSensor gyroscope;
 
-    /*private class MotorTest implements IRobotMode
+    private class MotorTest implements IRobotMode
     {
         private Boolean lastButton0 = false;
         private Boolean lastButton1 = false;
@@ -33,7 +33,7 @@ public class Robot extends RobotBase {
 
         public MotorTest() {
             int[] canPorts = {
-                2, 3, 4, 5, 6, 7
+                10, 3, 6, 4, 5, 7
             };
 
             motors = new TalonSRX[canPorts.length];
@@ -105,12 +105,12 @@ public class Robot extends RobotBase {
                 motors[i].set(ControlMode.PercentOutput, 0.0);
             }
         }
-    } */ 
+    }  
     
     public Robot() {
         gyroscope = new NavXMXP();
-        //drive = new Drive(gyroscope);
-        drive = new NullDrive(); 
+        drive = new Drive(gyroscope);
+        //drive = new NullDrive(); 
         hook = new Hook();
         launcher = new Launcher();
 
@@ -150,12 +150,9 @@ public class Robot extends RobotBase {
     }
     
     private void doPeripheralPeriodicProcessing() {
-      
         drive.periodic();
         Debug.periodic(); 
-        Debug.logPeriodic("Before");
-        Debug.logPeriodic(Double.toString(gyroscope.getYaw()));
-        Debug.logPeriodic("After");
+
     }
     
     private IRobotMode getDesiredMode() {
