@@ -63,4 +63,9 @@ public class TeleoperatedMode implements IRobotMode {
 
     }
 
+    if (xboxController.getAButtonPressed()) {
+        launcher.pullInCargo();
+        
+    }
+
 }

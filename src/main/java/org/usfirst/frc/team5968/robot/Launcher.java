@@ -36,6 +36,10 @@ public class Launcher implements ILauncher
     }
 
     @Override
+    public void init() {
+        stop(); 
+    }
+    @Override
     public void periodic() {
         launcherMotor.set(ControlMode.PercentOutput, motorSpeed);
     }
