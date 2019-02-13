@@ -16,10 +16,12 @@ public class Launcher implements ILauncher
 
     public Launcher() {
         launcherMotor = new TalonSRX(PortMap.portOf(CAN.CONVEYER_MOTOR_CONTROLLER));
+        launcherMotor.setInverted(true);
 
         stop();
     }
 
+    @Override
     public void stop() {
         motorSpeed = LOW;
     }
@@ -27,7 +29,7 @@ public class Launcher implements ILauncher
     @Override
     public void pullInCargo() {
         // There may need to be a medium speed depending on how powerful the launcher is.
-        motorSpeed = HIGH; 
+        motorSpeed = HIGH;
     }
 
     @Override
@@ -37,7 +39,7 @@ public class Launcher implements ILauncher
 
     @Override
     public void init() {
-        stop(); 
+        stop();
     }
     @Override
     public void periodic() {

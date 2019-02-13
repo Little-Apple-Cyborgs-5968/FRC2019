@@ -47,6 +47,23 @@ public class TeleoperatedMode implements IRobotMode {
         }
 
         drive.lookAt(angle, rotationSpeed);
+
+        if (xboxController.getAButton()) {
+            launcher.pullInCargo();
+        } else {
+            launcher.stop();
+        }
+    
+        if (xboxController.getBButton()) {
+            hook.grabPanel();
+    
+        }
+    
+        if (xboxController.getYButton()) {
+            hook.releasePanel();
+    
+        }
+    
     }
 
     private double getLeftStickY() {
@@ -62,10 +79,4 @@ public class TeleoperatedMode implements IRobotMode {
         return (Math.abs(leftX) < TOLERANCE) ? 0 : Math.pow(leftX, 3); 
 
     }
-
-    if (xboxController.getAButtonPressed()) {
-        launcher.pullInCargo();
-        
-    }
-
 }

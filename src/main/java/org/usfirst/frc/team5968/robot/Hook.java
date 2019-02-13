@@ -1,13 +1,19 @@
+package org.usfirst.frc.team5968.robot;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Compressor;
 
 public class Hook implements IHook {
-    
-    private DoubleSolenoid piston;
-    private PistonState pistonState; 
 
-    
+    private DoubleSolenoid piston;
+    private PistonState pistonState;
+    private Compressor compressor;
+
+
     public Hook (){
-        piston = new DoubleSolenoid(0, 1); // change to real ports later
+        compressor = new Compressor(PortMap.portOf(PortMap.CAN.PCM));
+        compressor.setClosedLoopControl(true);
+        piston = new DoubleSolenoid(0,1);
         pistonState = PistonState.OPEN;
     }
 
@@ -29,11 +35,18 @@ public class Hook implements IHook {
             grabPanel();
         }
     }
+
+    @Override
     public void periodic() {
         if (pistonState == PistonState.CLOSED) {
             piston.set(DoubleSolenoid.Value.kReverse);
         } else {
             piston.set(DoubleSolenoid.Value.kForward);
         }
+    }
+
+    @Override
+    public void init() {
+
     }
 }
