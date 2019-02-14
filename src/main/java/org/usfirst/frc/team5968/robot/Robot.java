@@ -149,6 +149,7 @@ public class Robot extends RobotBase {
         drive.init();
         launcher.init();
         hook.init();
+        cargoGuide.init();
    
     }
     

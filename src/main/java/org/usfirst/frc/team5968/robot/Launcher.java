@@ -27,13 +27,7 @@ public class Launcher implements ILauncher
     }
 
     @Override
-    public void pullInCargo() {
-        // There may need to be a medium speed depending on how powerful the launcher is.
-        motorSpeed = HIGH;
-    }
-
-    @Override
-    public void releaseCargo() {
+    public void start() {
         motorSpeed = HIGH;
     }
 

@@ -13,6 +13,12 @@ public class CargoGuide implements ICargoGuide {
     }
 
     @Override
+    public void init() {
+        disengageGuide();
+
+    }
+
+    @Override
     public void engageGuide() {
         guidePiston.set(DoubleSolenoid.Value.kForward);
     }
