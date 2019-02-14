@@ -28,25 +28,7 @@ public class Hook implements IHook {
     }
 
     @Override
-    public void toggleGrabbing() {
-        if (pistonState == PistonState.CLOSED) {
-            releasePanel();
-        } else {
-            grabPanel();
-        }
-    }
-
-    @Override
-    public void periodic() {
-        if (pistonState == PistonState.CLOSED) {
-            piston.set(DoubleSolenoid.Value.kReverse);
-        } else {
-            piston.set(DoubleSolenoid.Value.kForward);
-        }
-    }
-
-    @Override
     public void init() {
-
+        
     }
 }

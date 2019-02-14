@@ -1,16 +1,14 @@
-/*package org.usfirst.frc.team5968.robot;
+package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class CargoGuide implements ICargoGuide {
 
     private DoubleSolenoid guidePiston;
-    private PistonState pistonState; 
 
     public CargoGuide() {
 
-        guidePiston = new DoubleSolenoid(2, 3); // add real channels later
-        pistonState = PistonState.OPEN;
+        guidePiston = new DoubleSolenoid(0, 1);
 
     }
 
@@ -25,4 +23,3 @@ public class CargoGuide implements ICargoGuide {
     }
 
 }
-*/ 

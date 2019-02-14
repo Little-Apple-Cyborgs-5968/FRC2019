@@ -6,10 +6,6 @@ public interface IHook {
 
     public void releasePanel();
 
-    public void toggleGrabbing();
-
-    public void periodic();
-
     public void init(); 
     
 }
