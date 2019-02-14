@@ -12,15 +12,13 @@ public class HABLineAuto implements IRobotMode {
 
     public HABLineAuto(IDrive drive) {
         this.drive = drive; 
-        robotSpeed = LOW;
-        
+        robotSpeed = LOW;  
     }
 
     @Override
     public void init() {
         robotSpeed = LOW;
         driveStraight(); 
-        
     }
 
     @Override
@@ -29,13 +27,11 @@ public class HABLineAuto implements IRobotMode {
             //drive.driveDistance(0, robotSpeed, 6.0, /* Runnable? */);
             robotSpeed = LOW;
         } 
-
     }
 
     public void driveStraight() {
         robotSpeed = HIGH;
         drive.driveManual(0, robotSpeed);
-
     }
 
     private boolean crossedLine() {
@@ -44,7 +40,6 @@ public class HABLineAuto implements IRobotMode {
         } else {
             return false; 
         }
-
     }
 
 }

@@ -27,7 +27,6 @@ public class TeleoperatedMode implements IRobotMode {
         this.hook = hook; 
         this.launcher = launcher;
         this.cargoGuide = cargoGuide;
-
     }
    
     @Override
@@ -70,37 +69,28 @@ public class TeleoperatedMode implements IRobotMode {
     
         if (xboxController.getYButton()) {
             hook.grabPanel();
-    
         }
     
         if (xboxController.getXButton()) {
             hook.releasePanel();
-    
         }
 
         if (xboxController.getBButton()) {
             cargoGuide.engageGuide();
-
         }
 
         if(xboxController.getAButton()) {
             cargoGuide.disengageGuide();
-
         }
-    
     }
 
-    private double getLeftStickY() {
-            
+    private double getLeftStickY() {  
         double leftY = xboxController.getY(Hand.kLeft); 
-        return (Math.abs(leftY) < TOLERANCE) ? 0 : -Math.pow(leftY, CONTROL_EXPONENT); 
-
+        return (Math.abs(leftY) < TOLERANCE) ? 0 : -Math.pow(leftY, CONTROL_EXPONENT);
     }
 
-    private double getLeftStickX() {
-            
+    private double getLeftStickX() { 
         double leftX = xboxController.getX(Hand.kLeft); 
-        return (Math.abs(leftX) < TOLERANCE) ? 0 : Math.pow(leftX, CONTROL_EXPONENT); 
-
+        return (Math.abs(leftX) < TOLERANCE) ? 0 : Math.pow(leftX, CONTROL_EXPONENT);
     }
 }

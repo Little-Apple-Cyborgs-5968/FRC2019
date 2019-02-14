@@ -7,15 +7,12 @@ public class CargoGuide implements ICargoGuide {
     private DoubleSolenoid guidePiston;
 
     public CargoGuide() {
-
         guidePiston = new DoubleSolenoid(0, 1);
-
     }
 
     @Override
     public void init() {
         disengageGuide();
-
     }
 
     @Override

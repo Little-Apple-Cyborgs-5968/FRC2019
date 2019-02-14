@@ -4,8 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import org.usfirst.frc.team5968.robot.PortMap.CAN;
-
 public class Drive implements IDrive {
 
     private IGyroscopeSensor gyroscope;
@@ -26,7 +24,7 @@ public class Drive implements IDrive {
     private double rotationSpeed;
 
     private static final double DELTA_ANGLE_SPEED_POWER = 1;
-    private static final double MAINTAINING_HEADING_SPEED = 0.5;
+    private static final double MAINTAINING_HEADING_SPEED = 1.0;
 
     public Drive(IGyroscopeSensor gyroscope){
 
@@ -77,7 +75,6 @@ public class Drive implements IDrive {
     @Override
     public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine) {
         setCompletionRoutine(completionRoutine);
-
     }
 
     @Override
@@ -89,19 +86,16 @@ public class Drive implements IDrive {
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {
         setCompletionRoutine(null);
         driveManualImplementation(xDirectionSpeed, yDirectionSpeed);
-
     }
 
     private void driveManualImplementation(double xDirectionSpeed, double yDirectionSpeed) {
         this.xDirectionSpeed = xDirectionSpeed;
         this.yDirectionSpeed = yDirectionSpeed;
         driveMode = DriveMode.DRIVERCONTROL;
-
     }
 
     private void stop() {
         driveManualImplementation(0.0, 0.0);
-
     }
 
     @Override
@@ -110,15 +104,13 @@ public class Drive implements IDrive {
 
         desiredAngle = MathUtilities.normalizeAngle(angle);
         rotationSpeed = speed;
-
-
     }
 
     @Override
     public void maintainHeading() {
         setCompletionRoutine(null);
         desiredAngle = gyroscope.getYaw();
-        rotationSpeed = 1.0;
+        rotationSpeed = MAINTAIN_HEADING_SPEED;
     }
 
     private void setCompletionRoutine(Runnable completionRountime) {
@@ -127,7 +119,6 @@ public class Drive implements IDrive {
         }
 
         currentCompletionRoutine = completionRountime;
-
     }
 
     @Override
@@ -135,7 +126,6 @@ public class Drive implements IDrive {
         currentCompletionRoutine = null;
         stop();
         gyroscope.resetYaw();
-
     }
 
     @Override
@@ -185,7 +175,6 @@ public class Drive implements IDrive {
             }
 
             Debug.logPeriodic(" actualSpeed: " + actualSpeed);
-
         }
 
         // Set Motor Speeds

@@ -1,7 +1,5 @@
 package org.usfirst.frc.team5968.robot;
 
-import org.usfirst.frc.team5968.robot.PortMap.CAN;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -35,6 +33,7 @@ public class Launcher implements ILauncher
     public void init() {
         stop();
     }
+    
     @Override
     public void periodic() {
         launcherMotor.set(ControlMode.PercentOutput, motorSpeed);

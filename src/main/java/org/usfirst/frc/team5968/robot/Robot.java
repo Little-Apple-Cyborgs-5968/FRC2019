@@ -119,7 +119,6 @@ public class Robot extends RobotBase {
         autonomousMode = new AutonomousMode(drive, hook);
         teleoperatedMode = new TeleoperatedMode(drive, hook, launcher, cargoGuide);
         //teleoperatedMode = new MotorTest();
-    
     }
     
     @Override
@@ -150,14 +149,12 @@ public class Robot extends RobotBase {
         launcher.init();
         hook.init();
         cargoGuide.init();
-   
     }
     
     private void doPeripheralPeriodicProcessing() {
         drive.periodic();
         launcher.periodic();
         Debug.periodic();
-
     }
     
     private IRobotMode getDesiredMode() {
