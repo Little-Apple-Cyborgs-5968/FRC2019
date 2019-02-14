@@ -15,7 +15,7 @@ public class Launcher implements ILauncher
     private static final double LOW = 0.0;
 
     public Launcher() {
-        launcherMotor = new TalonSRX(PortMap.portOf(CAN.CONVEYER_MOTOR_CONTROLLER));
+        launcherMotor = new TalonSRX(PortMap.CAN.CONVEYER_MOTOR_CONTROLLER);
         launcherMotor.setInverted(true);
 
         stop();

@@ -14,12 +14,12 @@ public class CargoGuide implements ICargoGuide {
 
     @Override
     public void engageGuide() {
-        grabberPiston.set(DoubleSolenoid.Value.kForward);
+        guidePiston.set(DoubleSolenoid.Value.kForward);
     }
 
     @Override
     public void disengageGuide() {
-        grabberPiston.set(DoubleSolenoid.Value.kReverse);
+        guidePiston.set(DoubleSolenoid.Value.kReverse);
     }
 
 }

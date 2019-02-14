@@ -17,11 +17,11 @@ public class TeleoperatedMode implements IRobotMode {
     
     private static final double TOLERANCE = 0.1 * 5.0;
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
-    
+    private static final double CONTROL_EXPONENT = 5.0;
 
     public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher, ICargoGuide cargoGuide) {
 
-        xboxController = new XboxController(PortMap.portOf(USB.XBOXCONTROLLER));
+        xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
         this.drive = drive; 
         this.hook = hook; 
@@ -93,14 +93,14 @@ public class TeleoperatedMode implements IRobotMode {
     private double getLeftStickY() {
             
         double leftY = xboxController.getY(Hand.kLeft); 
-        return (Math.abs(leftY) < TOLERANCE) ? 0 : -Math.pow(leftY, 5); 
+        return (Math.abs(leftY) < TOLERANCE) ? 0 : -Math.pow(leftY, CONTROL_EXPONENT); 
 
     }
 
     private double getLeftStickX() {
             
         double leftX = xboxController.getX(Hand.kLeft); 
-        return (Math.abs(leftX) < TOLERANCE) ? 0 : Math.pow(leftX, 5); 
+        return (Math.abs(leftX) < TOLERANCE) ? 0 : Math.pow(leftX, CONTROL_EXPONENT); 
 
     }
 }

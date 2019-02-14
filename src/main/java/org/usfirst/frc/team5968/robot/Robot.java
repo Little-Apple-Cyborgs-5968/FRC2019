@@ -155,7 +155,6 @@ public class Robot extends RobotBase {
     private void doPeripheralPeriodicProcessing() {
         drive.periodic();
         launcher.periodic();
-        hook.periodic();
         Debug.periodic();
 
     }

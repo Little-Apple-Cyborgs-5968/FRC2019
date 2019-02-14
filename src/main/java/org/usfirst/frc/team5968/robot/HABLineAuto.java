@@ -32,10 +32,9 @@ public void periodic() {
         // if false: keep going forward  
 }
 
-    @Override
-    public void periodic() {
-        
-    }
+public void driveStraight() {
+    
+}
 
 private boolean crossedLine() {
     // checks whether robot has crossed line.
