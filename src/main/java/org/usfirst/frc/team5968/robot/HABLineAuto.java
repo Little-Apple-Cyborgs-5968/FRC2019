@@ -2,7 +2,7 @@ package org.usfirst.frc.team5968.robot;
 
 public class HABLineAuto implements IRobotMode {
 
-    private IDrive drive; 
+    private IDrive drive;
 
     private double robotSpeed;
     private static final double HIGH = 0.5;
@@ -11,6 +11,7 @@ public class HABLineAuto implements IRobotMode {
     public HABLineAuto(IDrive drive) {
         this.drive = drive; 
 
+        robotSpeed = LOW;
     }
 
 @Override
@@ -31,11 +32,10 @@ public void periodic() {
         // if false: keep going forward  
 }
 
-//crosses HAB line
-public void driveStraight() {
-    // Just needs to set motors going forward
-    drive.driveManual(0, robotSpeed);
-}
+    @Override
+    public void periodic() {
+        
+    }
 
 private boolean crossedLine() {
     // checks whether robot has crossed line.
