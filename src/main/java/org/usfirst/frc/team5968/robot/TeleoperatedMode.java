@@ -11,6 +11,7 @@ public class TeleoperatedMode implements IRobotMode {
     private IDrive drive; 
     private IHook hook;
     private ILauncher launcher;
+    private ICargoGuide cargoGuide;
 
     private boolean headingIsMaintained = true;
     
@@ -18,13 +19,14 @@ public class TeleoperatedMode implements IRobotMode {
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
     
 
-    public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher) {
+    public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher, ICargoGuide cargoGuide) {
 
         xboxController = new XboxController(PortMap.portOf(USB.XBOXCONTROLLER));
 
         this.drive = drive; 
         this.hook = hook; 
-        this.launcher = launcher; 
+        this.launcher = launcher;
+        this.cargoGuide = cargoGuide;
 
     }
    
@@ -66,14 +68,24 @@ public class TeleoperatedMode implements IRobotMode {
             launcher.stop();
         }
     
-        if (xboxController.getBButton()) {
+        if (xboxController.getYButton()) {
             hook.grabPanel();
     
         }
     
-        if (xboxController.getYButton()) {
+        if (xboxController.getXButton()) {
             hook.releasePanel();
     
+        }
+
+        if (xboxController.getBButton()) {
+            cargoGuide.engageGuide();
+
+        }
+
+        if(xboxController.getAButton()) {
+            cargoGuide.disengageGuide();
+
         }
     
     }

@@ -18,6 +18,7 @@ public class Robot extends RobotBase {
     private IDrive drive;
     private IHook hook;
     private ILauncher launcher;
+    private ICargoGuide cargoGuide;
     private IGyroscopeSensor gyroscope;
 
     private class MotorTest implements IRobotMode
@@ -116,7 +117,7 @@ public class Robot extends RobotBase {
 
         disabledMode = new DisabledMode(hook, launcher);
         autonomousMode = new AutonomousMode(drive, hook);
-        teleoperatedMode = new TeleoperatedMode(drive, hook, launcher);
+        teleoperatedMode = new TeleoperatedMode(drive, hook, launcher, cargoGuide);
         //teleoperatedMode = new MotorTest();
     
     }
