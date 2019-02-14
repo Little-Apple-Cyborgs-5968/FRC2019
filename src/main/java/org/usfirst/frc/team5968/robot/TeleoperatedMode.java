@@ -12,7 +12,11 @@ public class TeleoperatedMode implements IRobotMode {
     private IHook hook;
     private ILauncher launcher;
 
-    private final double TOLERANCE = 0.1 * 5.0;
+    private boolean headingIsMaintained = true;
+    
+    private static final double TOLERANCE = 0.1 * 5.0;
+    private static final double ROTATION_SPEED_THRESHOLD = 0.3;
+    
 
     public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher) {
 
@@ -46,9 +50,17 @@ public class TeleoperatedMode implements IRobotMode {
             rotationSpeed = Math.pow(rotationSpeed, 3); 
         }
 
-        drive.lookAt(angle, rotationSpeed);
+        if(rotationSpeed < ROTATION_SPEED_THRESHOLD) {
+            if(!headingIsMaintained) {
+                drive.maintainHeading();
+                headingIsMaintained = true;
+            }
+        } else {
+            drive.lookAt(angle, rotationSpeed);
+            headingIsMaintained = false;
+        }
 
-        if (xboxController.getAButton()) {
+        if (xboxController.getBumper(Hand.kRight)) {
             launcher.pullInCargo();
         } else {
             launcher.stop();
@@ -69,14 +81,14 @@ public class TeleoperatedMode implements IRobotMode {
     private double getLeftStickY() {
             
         double leftY = xboxController.getY(Hand.kLeft); 
-        return (Math.abs(leftY) < TOLERANCE) ? 0 : -Math.pow(leftY, 3); 
+        return (Math.abs(leftY) < TOLERANCE) ? 0 : -Math.pow(leftY, 5); 
 
     }
 
     private double getLeftStickX() {
             
         double leftX = xboxController.getX(Hand.kLeft); 
-        return (Math.abs(leftX) < TOLERANCE) ? 0 : Math.pow(leftX, 3); 
+        return (Math.abs(leftX) < TOLERANCE) ? 0 : Math.pow(leftX, 5); 
 
     }
 }

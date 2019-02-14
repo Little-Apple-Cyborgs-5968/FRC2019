@@ -25,7 +25,6 @@ public class Drive implements IDrive {
     private double desiredAngle;
     private double rotationSpeed;
 
-    private static final double ROTATION_SPEED_THRESHOLD = 0.3;
     private static final double DELTA_ANGLE_SPEED_POWER = 1;
     private static final double MAINTAINING_HEADING_SPEED = 0.5;
 
@@ -109,14 +108,17 @@ public class Drive implements IDrive {
     public void lookAt(double angle, double speed) {
         setCompletionRoutine(null);
 
-        if (speed < ROTATION_SPEED_THRESHOLD) {
-            desiredAngle = gyroscope.getYaw();
-            rotationSpeed = MAINTAINING_HEADING_SPEED;
-        }
         desiredAngle = MathUtilities.normalizeAngle(angle);
         rotationSpeed = speed;
 
 
+    }
+
+    @Override
+    public void maintainHeading() {
+        setCompletionRoutine(null);
+        desiredAngle = gyroscope.getYaw();
+        rotationSpeed = 1.0;
     }
 
     private void setCompletionRoutine(Runnable completionRountime) {
@@ -144,22 +146,23 @@ public class Drive implements IDrive {
 
         // Linear Motion
         double fieldAngle = Math.atan2(yDirectionSpeed, xDirectionSpeed) - (Math.PI / 2);
-        double robotDriveAngle = fieldAngle - gyroscope.getYaw();
+        double robotDriveAngle = fieldAngle + gyroscope.getYaw();
 
         double speedMagnitude = Math.sqrt(Math.pow(xDirectionSpeed, 2) + Math.pow(yDirectionSpeed, 2));
-        leftSpeed = Math.cos(robotDriveAngle) * speedMagnitude;
+        leftSpeed = Math.cos(robotDriveAngle) * speedMagnitude * 0.5;
         rightSpeed = leftSpeed;
         middleSpeed = Math.sin(robotDriveAngle) * speedMagnitude;
 
         Debug.logPeriodic("---------------------------------------------");
-        Debug.logPeriodic(Double.toString(gyroscope.getYaw()));
-        Debug.logPeriodic(Double.toString(leftSpeed));
+        //Debug.logPeriodic("controllerAngle: " + MathUtilities.normalizeAngle(fieldAngle));
+        Debug.logPeriodic("      gyroAngle: " + gyroscope.getYaw());
+        //Debug.logPeriodic("robotDriveAngle:" + MathUtilities.normalizeAngle(robotDriveAngle));
 
         // Angular Motion
         if (true) {
             double deltaAngle = gyroscope.getYaw() - desiredAngle;
 
-            Debug.logPeriodic(" desiredAngle: " + desiredAngle);
+            //Debug.logPeriodic(" desiredAngle: " + desiredAngle);
             Debug.logPeriodic(" deltaAngle1: " + deltaAngle);
 
             if (Math.abs(deltaAngle) > Math.PI) {
@@ -187,7 +190,7 @@ public class Drive implements IDrive {
 
         // Set Motor Speeds
         leftMotorControllerLead.set(ControlMode.PercentOutput, leftSpeed);
-        rightMotorControllerFollow.set(ControlMode.PercentOutput, rightSpeed);
-        middleMotorControllerFollow.set(ControlMode.PercentOutput, middleSpeed);
+        rightMotorControllerLead.set(ControlMode.PercentOutput, rightSpeed);
+        middleMotorControllerLead.set(ControlMode.PercentOutput, middleSpeed);
     }
 }

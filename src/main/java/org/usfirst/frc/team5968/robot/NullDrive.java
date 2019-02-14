@@ -68,4 +68,8 @@ public class NullDrive implements IDrive {
 
     }
 
+    @Override
+    public void maintainHeading() {
+        
+    }
 }

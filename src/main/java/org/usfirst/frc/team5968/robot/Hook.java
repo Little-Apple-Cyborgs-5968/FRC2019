@@ -13,7 +13,7 @@ public class Hook implements IHook {
     public Hook (){
         compressor = new Compressor(PortMap.portOf(PortMap.CAN.PCM));
         compressor.setClosedLoopControl(true);
-        piston = new DoubleSolenoid(0,1);
+        piston = new DoubleSolenoid(2,3);
         pistonState = PistonState.OPEN;
     }
 
