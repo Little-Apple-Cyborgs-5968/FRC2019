@@ -36,4 +36,6 @@ public interface IDrive {
      */
     public void periodic();
 
+    public void maintainHeading(); /* Called if stick position is lower than threshold */
+
 }

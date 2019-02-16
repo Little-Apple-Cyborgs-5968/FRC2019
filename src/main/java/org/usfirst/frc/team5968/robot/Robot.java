@@ -18,6 +18,7 @@ public class Robot extends RobotBase {
     private IDrive drive;
     private IHook hook;
     private ILauncher launcher;
+    private ICargoGuide cargoGuide;
     private IGyroscopeSensor gyroscope;
 
     private class MotorTest implements IRobotMode
@@ -116,9 +117,8 @@ public class Robot extends RobotBase {
 
         disabledMode = new DisabledMode(hook, launcher);
         autonomousMode = new AutonomousMode(drive, hook);
-        teleoperatedMode = new TeleoperatedMode(drive, hook, launcher);
+        teleoperatedMode = new TeleoperatedMode(drive, hook, launcher, cargoGuide);
         //teleoperatedMode = new MotorTest();
-    
     }
     
     @Override
@@ -148,15 +148,13 @@ public class Robot extends RobotBase {
         drive.init();
         launcher.init();
         hook.init();
-   
+        cargoGuide.init();
     }
     
     private void doPeripheralPeriodicProcessing() {
         drive.periodic();
         launcher.periodic();
-        hook.periodic();
         Debug.periodic();
-
     }
     
     private IRobotMode getDesiredMode() {
