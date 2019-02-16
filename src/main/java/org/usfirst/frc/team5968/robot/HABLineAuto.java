@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5968.robot; 
+package org.usfirst.frc.team5968.robot;
 
 public class HABLineAuto implements IRobotMode {
 
@@ -11,14 +11,14 @@ public class HABLineAuto implements IRobotMode {
     private double input;
 
     public HABLineAuto(IDrive drive) {
-        this.drive = drive; 
-        robotSpeed = LOW;  
+        this.drive = drive;
+        robotSpeed = LOW;
     }
 
     @Override
     public void init() {
         robotSpeed = LOW;
-        driveStraight(); 
+        driveStraight();
     }
 
     @Override
@@ -26,7 +26,7 @@ public class HABLineAuto implements IRobotMode {
         if(crossedLine()) {
             //drive.driveDistance(0, robotSpeed, 6.0, /* Runnable? */);
             robotSpeed = LOW;
-        } 
+        }
     }
 
     public void driveStraight() {
@@ -38,7 +38,7 @@ public class HABLineAuto implements IRobotMode {
         if(input < 64) {
             return true;
         } else {
-            return false; 
+            return false;
         }
     }
 

@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5968.robot; 
+package org.usfirst.frc.team5968.robot;
 
 public interface IHook {
 
@@ -6,6 +6,6 @@ public interface IHook {
 
     public void releasePanel();
 
-    public void init(); 
-    
+    public void init();
+
 }
