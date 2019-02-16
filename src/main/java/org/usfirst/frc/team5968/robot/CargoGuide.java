@@ -1,28 +1,28 @@
-/*package org.usfirst.frc.team5968.robot;
+package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class CargoGuide implements ICargoGuide {
 
     private DoubleSolenoid guidePiston;
-    private PistonState pistonState; 
 
     public CargoGuide() {
+        guidePiston = new DoubleSolenoid(0, 1);
+    }
 
-        guidePiston = new DoubleSolenoid(2, 3); // add real channels later
-        pistonState = PistonState.OPEN;
-
+    @Override
+    public void init() {
+        disengageGuide();
     }
 
     @Override
     public void engageGuide() {
-        grabberPiston.set(DoubleSolenoid.Value.kForward);
+        guidePiston.set(DoubleSolenoid.Value.kForward);
     }
 
     @Override
     public void disengageGuide() {
-        grabberPiston.set(DoubleSolenoid.Value.kReverse);
+        guidePiston.set(DoubleSolenoid.Value.kReverse);
     }
 
 }
-*/ 

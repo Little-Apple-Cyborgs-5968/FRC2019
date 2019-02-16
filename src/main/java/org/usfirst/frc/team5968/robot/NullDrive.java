@@ -50,7 +50,7 @@ public class NullDrive implements IDrive {
 
     @Override
     public void lookAt(double angle, double speed) {
-
+        Debug.logPeriodic("" + angle);
     }
 
     @Override
@@ -68,4 +68,8 @@ public class NullDrive implements IDrive {
 
     }
 
+    @Override
+    public void maintainHeading() {
+        
+    }
 }

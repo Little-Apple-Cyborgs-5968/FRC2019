@@ -8,7 +8,6 @@ public class AutonomousMode implements IRobotMode {
     public AutonomousMode(IDrive drive, IHook hook) {
         this.drive = drive;
         this.hook = hook; 
-
     }
 
     @Override

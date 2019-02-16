@@ -18,9 +18,10 @@ public class Robot extends RobotBase {
     private IDrive drive;
     private IHook hook;
     private ILauncher launcher;
+    private ICargoGuide cargoGuide;
     private IGyroscopeSensor gyroscope;
 
-    /*private class MotorTest implements IRobotMode
+    private class MotorTest implements IRobotMode
     {
         private Boolean lastButton0 = false;
         private Boolean lastButton1 = false;
@@ -33,7 +34,7 @@ public class Robot extends RobotBase {
 
         public MotorTest() {
             int[] canPorts = {
-                2, 3, 4, 5, 6, 7
+                10, 3, 6, 4, 5, 7
             };
 
             motors = new TalonSRX[canPorts.length];
@@ -105,20 +106,19 @@ public class Robot extends RobotBase {
                 motors[i].set(ControlMode.PercentOutput, 0.0);
             }
         }
-    } */ 
+    }  
     
     public Robot() {
         gyroscope = new NavXMXP();
-        //drive = new Drive(gyroscope);
-        drive = new NullDrive(); 
+        drive = new Drive(gyroscope);
+        //drive = new NullDrive(); 
         hook = new Hook();
         launcher = new Launcher();
 
         disabledMode = new DisabledMode(hook, launcher);
         autonomousMode = new AutonomousMode(drive, hook);
-        teleoperatedMode = new TeleoperatedMode(drive, hook, launcher);
+        teleoperatedMode = new TeleoperatedMode(drive, hook, launcher, cargoGuide);
         //teleoperatedMode = new MotorTest();
-    
     }
     
     @Override
@@ -146,16 +146,15 @@ public class Robot extends RobotBase {
     
     private void doPeripheralReinitialization() {
         drive.init();
-   
+        launcher.init();
+        hook.init();
+        cargoGuide.init();
     }
     
     private void doPeripheralPeriodicProcessing() {
-      
         drive.periodic();
-        Debug.periodic(); 
-        Debug.logPeriodic("Before");
-        Debug.logPeriodic(Double.toString(gyroscope.getYaw()));
-        Debug.logPeriodic("After");
+        launcher.periodic();
+        Debug.periodic();
     }
     
     private IRobotMode getDesiredMode() {

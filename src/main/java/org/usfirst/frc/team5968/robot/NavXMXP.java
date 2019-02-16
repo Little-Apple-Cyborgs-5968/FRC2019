@@ -15,17 +15,17 @@ public class NavXMXP implements IGyroscopeSensor {
     
     @Override
     public double getPitch() {
-        return navX.getPitch();
+        return Math.toRadians(navX.getPitch()); 
     }
 
     @Override
     public double getRoll() {
-        return navX.getRoll();
+        return Math.toRadians(navX.getRoll());
     }
 
     @Override
     public double getYaw() {
-        return navX.getYaw();
+        return Math.toRadians(navX.getYaw());
     }
 
     @Override
