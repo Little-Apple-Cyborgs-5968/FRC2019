@@ -24,7 +24,7 @@ public class HABLineAuto implements IRobotMode {
     @Override
     public void periodic() {
         if(crossedLine()) {
-            //drive.driveDistance(0, robotSpeed, 6.0, /* Runnable? */);
+            drive.driveDistance(6.0, 0, robotSpeed);
             robotSpeed = LOW;
         } 
     }

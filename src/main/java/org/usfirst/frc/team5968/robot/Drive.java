@@ -24,7 +24,7 @@ public class Drive implements IDrive {
     private double rotationSpeed;
 
     private static final double DELTA_ANGLE_SPEED_POWER = 1;
-    private static final double MAINTAINING_HEADING_SPEED = 1.0;
+    private static final double MAINTAIN_HEADING_SPEED = 1.0;
 
     public Drive(IGyroscopeSensor gyroscope){
 
@@ -64,22 +64,28 @@ public class Drive implements IDrive {
 
     @Override
     public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
-
+        this.xDirectionSpeed = xDirectionSpeed;
+        this.yDirectionSpeed = yDirectionSpeed;
     }
 
     @Override
     public void rotateDegrees(double angle, double angularSpeed) {
-        
+        desiredAngle = angle;
+        rotationSpeed = angularSpeed;
     }
 
     @Override
     public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine) {
+        this.xDirectionSpeed = xDirectionSpeed;
+        this.yDirectionSpeed = yDirectionSpeed;
         setCompletionRoutine(completionRoutine);
     }
 
     @Override
     public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine) {
-
+        desiredAngle = gyroscope.getYaw() + relativeAngle;
+        rotationSpeed = angularSpeed;
+        setCompletionRoutine(completionRoutine);
     }
 
     @Override
