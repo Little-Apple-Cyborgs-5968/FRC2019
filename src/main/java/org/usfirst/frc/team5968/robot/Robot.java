@@ -1,26 +1,27 @@
-package org.usfirst.frc.team5968.robot; 
+package org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.Joystick;
+//import com.ctre.phoenix.motorcontrol.ControlMode;
+//import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+//import edu.wpi.first.wpilibj.Joystick;
 
 public class Robot extends RobotBase {
-    
+
     private IRobotMode disabledMode;
     private IRobotMode autonomousMode;
     private IRobotMode teleoperatedMode;
-    
+
     private IDrive drive;
     private IHook hook;
     private ILauncher launcher;
     private ICargoGuide cargoGuide;
     private IGyroscopeSensor gyroscope;
 
+    /*
     private class MotorTest implements IRobotMode
     {
         private Boolean lastButton0 = false;
@@ -44,7 +45,7 @@ public class Robot extends RobotBase {
             }
 
             joystick = new Joystick(0);
-        } 
+        }
 
         @Override
         public void init()
@@ -55,7 +56,7 @@ public class Robot extends RobotBase {
             doubleMode = false;
             lastDoubleButton = false;
         }
-        
+
         @Override
         public void periodic()
         {
@@ -106,31 +107,32 @@ public class Robot extends RobotBase {
                 motors[i].set(ControlMode.PercentOutput, 0.0);
             }
         }
-    }  
-    
+    } */
+
     public Robot() {
         gyroscope = new NavXMXP();
         drive = new Drive(gyroscope);
-        //drive = new NullDrive(); 
+        //drive = new NullDrive();
         hook = new Hook();
         launcher = new Launcher();
+        cargoGuide = new CargoGuide();
 
         disabledMode = new DisabledMode(hook, launcher);
         autonomousMode = new AutonomousMode(drive, hook);
         teleoperatedMode = new TeleoperatedMode(drive, hook, launcher, cargoGuide);
         //teleoperatedMode = new MotorTest();
     }
-    
+
     @Override
     public void startCompetition() {
         HAL.observeUserProgramStarting();
-        
+
         IRobotMode currentMode = null;
         IRobotMode desiredMode = null;
-        
+
         while (true) {
             desiredMode = getDesiredMode();
-        
+
             if (desiredMode != currentMode) {
                 LiveWindow.setEnabled(isTest());
                 doPeripheralReinitialization();
@@ -143,20 +145,21 @@ public class Robot extends RobotBase {
             LiveWindow.updateValues();
         }
     }
-    
+
+
     private void doPeripheralReinitialization() {
         drive.init();
         launcher.init();
         hook.init();
         cargoGuide.init();
     }
-    
+
     private void doPeripheralPeriodicProcessing() {
         drive.periodic();
         launcher.periodic();
         Debug.periodic();
     }
-    
+
     private IRobotMode getDesiredMode() {
         if (isDisabled()) {
             HAL.observeUserProgramDisabled();

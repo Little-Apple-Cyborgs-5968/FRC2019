@@ -1,24 +1,16 @@
-package org.usfirst.frc.team5968.robot; 
+package org.usfirst.frc.team5968.robot;
 
 public class NullDrive implements IDrive {
 
     @Override
     public DriveMode getCurrentDriveMode() {
-        return DriveMode.DRIVERCONTROL; 
+        return DriveMode.DRIVERCONTROL;
     }
-    
-    /*
-     * Drive straight forward a specified distance at a specified speed
-     */
 
      @Override
     public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed){
 
     }
-
-    /*
-     * Turn in place a specified angle at a specified speed
-     */
 
      @Override
     public void rotateDegrees(double angle, double angularSpeed) {
@@ -29,12 +21,12 @@ public class NullDrive implements IDrive {
      * completionRoutine is called when the current action has been completed
      */
 
-     @Override 
+     @Override
     public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine) {
 
     }
 
-    @Override 
+    @Override
     public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine) {
 
     }
@@ -57,19 +49,20 @@ public class NullDrive implements IDrive {
     public void init() {
 
     }
-    
+
     /*
      * Called periodically to actually execute the driving and rotating set by
      * the driveDistance() and rotateDegrees() methods
      */
 
-    @Override 
+    @Override
     public void periodic(){
 
     }
 
+    /* Called if stick position is lower than threshold */
     @Override
     public void maintainHeading() {
-        
+
     }
 }

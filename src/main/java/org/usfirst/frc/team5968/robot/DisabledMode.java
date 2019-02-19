@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5968.robot; 
+package org.usfirst.frc.team5968.robot;
 
 public class DisabledMode implements IRobotMode {
 
@@ -6,9 +6,9 @@ public class DisabledMode implements IRobotMode {
     private ILauncher launcher;
 
     public DisabledMode(IHook hook, ILauncher launcher) {
-        this.hook = hook; 
-        this.launcher = launcher; 
-    } 
+        this.hook = hook;
+        this.launcher = launcher;
+    }
 
     @Override
     public void init() {

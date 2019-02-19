@@ -1,6 +1,7 @@
-package org.usfirst.frc.team5968.robot; 
+package org.usfirst.frc.team5968.robot;
 
 public enum AutoMode {
-    HATCHPANEL, 
+    HATCHPANEL,
     HABLINE
+
 }
