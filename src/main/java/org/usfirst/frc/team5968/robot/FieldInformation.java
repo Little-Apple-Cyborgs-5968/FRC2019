@@ -32,6 +32,7 @@ public class FieldInformation implements IFieldInformation {
 
     }
 
+    // this is probably wrong
     /* switch (position) {
 
         case 1: startingPosition = FieldPosition.LEFT; // may be opposite
