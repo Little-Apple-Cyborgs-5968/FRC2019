@@ -5,9 +5,9 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.Joystick;
+//import com.ctre.phoenix.motorcontrol.ControlMode;
+//import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+//import edu.wpi.first.wpilibj.Joystick;
 
 public class Robot extends RobotBase {
 
@@ -21,6 +21,7 @@ public class Robot extends RobotBase {
     private ICargoGuide cargoGuide;
     private IGyroscopeSensor gyroscope;
 
+    /*
     private class MotorTest implements IRobotMode
     {
         private Boolean lastButton0 = false;
@@ -106,7 +107,7 @@ public class Robot extends RobotBase {
                 motors[i].set(ControlMode.PercentOutput, 0.0);
             }
         }
-    }
+    } */
 
     public Robot() {
         gyroscope = new NavXMXP();
@@ -114,6 +115,7 @@ public class Robot extends RobotBase {
         //drive = new NullDrive();
         hook = new Hook();
         launcher = new Launcher();
+        cargoGuide = new CargoGuide();
 
         disabledMode = new DisabledMode(hook, launcher);
         autonomousMode = new AutonomousMode(drive, hook);
@@ -143,6 +145,7 @@ public class Robot extends RobotBase {
             LiveWindow.updateValues();
         }
     }
+
 
     private void doPeripheralReinitialization() {
         drive.init();
