@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5968.robot;
+ackage org.usfirst.frc.team5968.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -15,7 +15,7 @@ public class TeleoperatedMode implements IRobotMode {
 
     private static final double TOLERANCE = 0.1 * 5.0;
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
-    private static final double CONTROL_EXPONENT = 2.0;
+    private static final double CONTROL_EXPONENT = 1.0;
 
     public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher, ICargoGuide cargoGuide) {
 
@@ -46,7 +46,7 @@ public class TeleoperatedMode implements IRobotMode {
             rotationSpeed = 0;
         }
         else {
-            rotationSpeed = Math.pow(rotationSpeed, 1);
+            rotationSpeed = Math.pow(rotationSpeed, 3);
         }
 
         if(rotationSpeed < ROTATION_SPEED_THRESHOLD) {

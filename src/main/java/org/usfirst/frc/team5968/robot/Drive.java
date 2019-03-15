@@ -23,7 +23,7 @@ public class Drive implements IDrive {
     private double desiredAngle;
     private double rotationSpeed;
 
-    private static final double DELTA_ANGLE_SPEED_POWER = 3;
+    private static final double DELTA_ANGLE_SPEED_POWER = 1;
     private static final double MAINTAINING_HEADING_SPEED = 1.0;
 
     public Drive(IGyroscopeSensor gyroscope){
@@ -139,7 +139,7 @@ public class Drive implements IDrive {
         double robotDriveAngle = fieldAngle + gyroscope.getYaw();
 
         double speedMagnitude = Math.sqrt(Math.pow(xDirectionSpeed, 2) + Math.pow(yDirectionSpeed, 2));
-        leftSpeed = Math.cos(robotDriveAngle) * speedMagnitude * 0.5;
+        leftSpeed = Math.cos(robotDriveAngle) * speedMagnitude * .7;
         rightSpeed = leftSpeed;
         middleSpeed = Math.sin(robotDriveAngle) * speedMagnitude;
 
@@ -152,7 +152,7 @@ public class Drive implements IDrive {
         if (true) {
             double deltaAngle = gyroscope.getYaw() - desiredAngle;
 
-            //Debug.logPeriodic(" desiredAngle: " + desiredAngle);
+            Debug.logPeriodic(" desiredAngle: " + desiredAngle);
             Debug.logPeriodic(" deltaAngle1: " + deltaAngle);
 
             if (Math.abs(deltaAngle) > Math.PI) {
