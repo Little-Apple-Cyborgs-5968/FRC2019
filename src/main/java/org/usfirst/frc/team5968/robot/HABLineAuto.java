@@ -17,7 +17,6 @@ public class HABLineAuto implements IRobotMode {
 
     @Override
     public void init() {
-        robotSpeed = LOW;
         driveStraight();
     }
 

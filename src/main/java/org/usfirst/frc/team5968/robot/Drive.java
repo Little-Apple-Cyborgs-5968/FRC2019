@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 public class Drive implements IDrive {
 
     private IGyroscopeSensor gyroscope;
@@ -36,6 +38,13 @@ public class Drive implements IDrive {
         rightMotorControllerFollow = new TalonSRX(PortMap.CAN.RIGHT_MOTOR_CONTROLLER_FOLLOW);
         middleMotorControllerLead = new TalonSRX(PortMap.CAN.MIDDLE_MOTOR_CONTROLLER_LEAD);
         middleMotorControllerFollow = new TalonSRX(PortMap.CAN.MIDDLE_MOTOR_CONTROLLER_FOLLOW);
+
+        leftMotorControllerLead.configFactoryDefault();
+        leftMotorControllerFollow.configFactoryDefault();
+        middleMotorControllerLead.configFactoryDefault();
+        middleMotorControllerFollow.configFactoryDefault();
+        rightMotorControllerLead.configFactoryDefault();
+        rightMotorControllerFollow.configFactoryDefault();
 
         leftMotorControllerLead.setNeutralMode(NeutralMode.Brake);
         leftMotorControllerFollow.setNeutralMode(NeutralMode.Brake);
@@ -85,29 +94,27 @@ public class Drive implements IDrive {
     @Override
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {
         setCompletionRoutine(null);
-        driveManualImplementation(xDirectionSpeed, yDirectionSpeed);
-    }
-
-    private void driveManualImplementation(double xDirectionSpeed, double yDirectionSpeed) {
         this.xDirectionSpeed = xDirectionSpeed;
         this.yDirectionSpeed = yDirectionSpeed;
         driveMode = DriveMode.DRIVERCONTROL;
     }
 
-    private void stop() {
-        driveManualImplementation(0.0, 0.0);
+    public void stop() {
+        driveManual(0.0, 0.0);
+        lookAt(0.0, 0.0);
     }
 
     @Override
     public void lookAt(double angle, double speed) {
+        driveMode = DriveMode.DRIVERCONTROL;
         setCompletionRoutine(null);
-
         desiredAngle = MathUtilities.normalizeAngle(angle);
         rotationSpeed = speed;
     }
 
     @Override
     public void maintainHeading() {
+        driveMode = DriveMode.DRIVERCONTROL;
         setCompletionRoutine(null);
         desiredAngle = gyroscope.getYaw();
         rotationSpeed = MAINTAINING_HEADING_SPEED;
@@ -115,7 +122,7 @@ public class Drive implements IDrive {
 
     private void setCompletionRoutine(Runnable completionRountime) {
         if (currentCompletionRoutine != null) {
-            throw new IllegalStateException("Tried to perform a lift action while one was already in progress!");
+            throw new IllegalStateException("Tried to perform an autonomous action while one was already in progress!");
         }
 
         currentCompletionRoutine = completionRountime;
@@ -125,7 +132,9 @@ public class Drive implements IDrive {
     public void init() {
         currentCompletionRoutine = null;
         stop();
-        gyroscope.resetYaw();
+        if (DriverStation.getInstance().isAutonomous()) {
+            gyroscope.resetYaw();
+        }
     }
 
     @Override
@@ -142,11 +151,6 @@ public class Drive implements IDrive {
         leftSpeed = Math.cos(robotDriveAngle) * speedMagnitude * .7;
         rightSpeed = leftSpeed;
         middleSpeed = Math.sin(robotDriveAngle) * speedMagnitude;
-
-        Debug.logPeriodic("---------------------------------------------");
-        //Debug.logPeriodic("controllerAngle: " + MathUtilities.normalizeAngle(fieldAngle));
-        Debug.logPeriodic("      gyroAngle: " + gyroscope.getYaw());
-        //Debug.logPeriodic("robotDriveAngle:" + MathUtilities.normalizeAngle(robotDriveAngle));
 
         // Angular Motion
         if (true) {

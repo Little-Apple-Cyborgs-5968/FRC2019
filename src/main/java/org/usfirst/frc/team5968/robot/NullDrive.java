@@ -45,6 +45,17 @@ public class NullDrive implements IDrive {
         Debug.logPeriodic("" + angle);
     }
 
+     /* Called if stick position is lower than threshold */
+     @Override
+     public void maintainHeading() {
+
+     }
+
+    @Override
+    public void stop() {
+
+    }
+
     @Override
     public void init() {
 
@@ -57,12 +68,6 @@ public class NullDrive implements IDrive {
 
     @Override
     public void periodic(){
-
-    }
-
-    /* Called if stick position is lower than threshold */
-    @Override
-    public void maintainHeading() {
 
     }
 }

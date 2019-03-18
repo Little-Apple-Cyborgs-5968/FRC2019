@@ -22,6 +22,10 @@ public interface IDrive {
 
     public void lookAt(double angle, double speed);
 
+    public void maintainHeading(); /* Called if stick position is lower than threshold */
+
+    public void stop();
+
     public void init();
 
     /*
@@ -29,7 +33,5 @@ public interface IDrive {
      * the driveDistance() and rotateDegrees() methods
      */
     public void periodic();
-
-    public void maintainHeading(); /* Called if stick position is lower than threshold */
 
 }
