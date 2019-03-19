@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class Drive implements IDrive {
 
     private IGyroscopeSensor gyroscope;
+    private ILineDetector lineDetector;
     private DriveMode driveMode;
 
     private TalonSRX leftMotorControllerLead;
@@ -120,6 +121,18 @@ public class Drive implements IDrive {
         rotationSpeed = MAINTAINING_HEADING_SPEED;
     }
 
+    @Override
+    public void driveToLine(double strafeSpeed,Runnable completionRoutine) {
+        setCompletionRoutine(completionRoutine);
+        xDirectionSpeed = strafeSpeed;
+        driveMode = DriveMode.LINEALIGNMENT;
+    }
+
+    @Override
+    public void driveToLine(double strafeSpeed) {
+        driveToLine(strafeSpeed, null);
+    }
+
     private void setCompletionRoutine(Runnable completionRountime) {
         if (currentCompletionRoutine != null) {
             throw new IllegalStateException("Tried to perform an autonomous action while one was already in progress!");
@@ -128,17 +141,22 @@ public class Drive implements IDrive {
         currentCompletionRoutine = completionRountime;
     }
 
-    @Override
-    public void init() {
-        currentCompletionRoutine = null;
+    private void handleActionEnd() {
+        // Saves currentCompletionRoutine before calling stop() so nothing is cleared
+        Runnable oldCompletionRoutine = currentCompletionRoutine;
+
+        // Stops robot from moving
         stop();
-        if (DriverStation.getInstance().isAutonomous()) {
-            gyroscope.resetYaw();
+
+        // Dispatch the completion routin if there is one configured
+        if (oldCompletionRoutine != null) {
+            currentCompletionRoutine = null;
+            oldCompletionRoutine.run();
         }
+
     }
 
-    @Override
-    public void periodic() {
+    private void manualControlPeriodic() {
         double leftSpeed;
         double rightSpeed;
         double middleSpeed;
@@ -185,5 +203,35 @@ public class Drive implements IDrive {
         leftMotorControllerLead.set(ControlMode.PercentOutput, leftSpeed);
         rightMotorControllerLead.set(ControlMode.PercentOutput, rightSpeed);
         middleMotorControllerLead.set(ControlMode.PercentOutput, middleSpeed);
+    }
+
+    @Override
+    public void init() {
+        currentCompletionRoutine = null;
+        stop();
+        gyroscope.resetYaw();
+    }
+
+    @Override
+    public void periodic() {
+        if (driveMode == DriveMode.DRIVERCONTROL) {
+            manualControlPeriodic();
+        } else if (driveMode == DriveMode.AUTODRIVINGTRAIGHT) {
+            throw new IllegalArgumentException("Auto-driving straight is not implemented!");
+        } else if (driveMode == DriveMode.AUTOROTATING) {
+            throw new IllegalArgumentException("Auto-driving rotation is not implemented!");
+        } else if (driveMode == DriveMode.LINEALIGNMENT) {
+            leftMotorControllerLead.set(ControlMode.PercentOutput, 0.0);
+            rightMotorControllerLead.set(ControlMode.PercentOutput, 0.0);
+            middleMotorControllerLead.set(ControlMode.PercentOutput, xDirectionSpeed);
+
+            if (lineDetector.isOnLine()) {
+                handleActionEnd();
+
+            }
+
+        } else {
+            throw new IllegalArgumentException("The drive base controller is in an invalid drive mode.");
+        }
     }
 }

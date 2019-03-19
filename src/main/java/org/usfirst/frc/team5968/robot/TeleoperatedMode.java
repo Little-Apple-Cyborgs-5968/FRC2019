@@ -20,6 +20,8 @@ public class TeleoperatedMode implements IRobotMode {
     private static final double LEFT_STICK_EXPONENT = 1.0;
     private static final double RIGHT_STICK_EXPONENT = 3.0;
 
+    private static final double LINE_ALIGNMENT_SPEED = 0.5;
+
     public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher, ICargoGuide cargoGuide) {
 
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
@@ -110,6 +112,16 @@ public class TeleoperatedMode implements IRobotMode {
 
         if(xboxController.getAButton()) {
             cargoGuide.disengageGuide();
+        }
+
+        // Process Line Alignment
+        final int RIGHT = 90;
+        final int LEFT = 90;
+
+        if (xboxController.getPOV() == LEFT) {
+            drive.driveToLine(-LINE_ALIGNMENT_SPEED);
+        } else if (xboxController.getPOV() == RIGHT) {
+            drive.driveToLine(LINE_ALIGNMENT_SPEED);
         }
     }
 }

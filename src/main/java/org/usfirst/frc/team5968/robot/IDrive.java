@@ -24,6 +24,10 @@ public interface IDrive {
 
     public void maintainHeading(); /* Called if stick position is lower than threshold */
 
+    public void driveToLine(double strafeSpeed,Runnable completionRoutine);
+
+    public void driveToLine(double strafeSpeed);
+
     public void stop();
 
     public void init();

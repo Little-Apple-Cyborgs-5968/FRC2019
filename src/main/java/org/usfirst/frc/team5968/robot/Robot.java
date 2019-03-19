@@ -16,6 +16,7 @@ public class Robot extends RobotBase {
     private ILauncher launcher;
     private ICargoGuide cargoGuide;
     private IGyroscopeSensor gyroscope;
+    private ILineDetector lineDetector;
 
     public Robot() {
         gyroscope = new NavXMXP();
@@ -23,6 +24,7 @@ public class Robot extends RobotBase {
         hook = new Hook();
         launcher = new Launcher();
         cargoGuide = new CargoGuide();
+        lineDetector = new LineDetector();
 
         disabledMode = new DisabledMode(hook, launcher);
         autonomousMode = new AutonomousMode(drive, hook);
