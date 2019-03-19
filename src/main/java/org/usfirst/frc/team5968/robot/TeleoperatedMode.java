@@ -12,17 +12,13 @@ public class TeleoperatedMode implements IRobotMode {
     private ILauncher launcher;
     private ICargoGuide cargoGuide;
 
-
     private boolean headingIsMaintained = true;
 
     private static final double LEFT_STICK_TOLERANCE = 0.1;
     private static final double ROTATION_SPEED_THRESHOLD = 0.3;
-<<<<<<< HEAD
+
     private static final double LEFT_STICK_EXPONENT = 1.0;
     private static final double RIGHT_STICK_EXPONENT = 3.0;
-=======
-    private static final double CONTROL_EXPONENT = 1.0;
->>>>>>> 1d320316add120cf67df78c5a4d70e4fbb48656b
 
     public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher, ICargoGuide cargoGuide) {
 
@@ -73,12 +69,8 @@ public class TeleoperatedMode implements IRobotMode {
             }
         }
         else {
-<<<<<<< HEAD
             leftX = Math.pow(leftX, LEFT_STICK_EXPONENT);
             leftY = Math.pow(leftY, LEFT_STICK_EXPONENT);
-=======
-            rotationSpeed = Math.pow(rotationSpeed, 3);
->>>>>>> 1d320316add120cf67df78c5a4d70e4fbb48656b
         }
 
         drive.driveManual(leftX, leftY);
