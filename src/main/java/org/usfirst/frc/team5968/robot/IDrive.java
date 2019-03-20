@@ -4,14 +4,14 @@ public interface IDrive {
 
     public DriveMode getCurrentDriveMode();
 
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed);
+    public void driveDistance(double distanceInches, double yDirectionSpeed);
 
     public void rotateDegrees(double angle, double angularSpeed);
 
     /*
      * completionRoutine is called when the current action has been completed
      */
-    public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine);
+    public void driveDistance(double distanceInches, double yDirectionSpeed, Runnable completionRoutine);
 
     public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine);
 

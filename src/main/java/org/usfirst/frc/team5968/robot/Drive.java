@@ -4,13 +4,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DriverStation;
-
 public class Drive implements IDrive {
 
     private IGyroscopeSensor gyroscope;
     private ILineDetector lineDetector;
     private DriveMode driveMode;
+    private IEncoder leftEncoder;
+    private IEncoder rightEncoder;
 
     private TalonSRX leftMotorControllerLead;
     private TalonSRX leftMotorControllerFollow;
@@ -25,9 +25,12 @@ public class Drive implements IDrive {
     private double yDirectionSpeed;
     private double desiredAngle;
     private double rotationSpeed;
+    private double distanceInches;
 
     private static final double DELTA_ANGLE_SPEED_POWER = 1;
     private static final double MAINTAINING_HEADING_SPEED = 1.0;
+    private static final double WHEEL_DIAMETER = 6.0; // inches
+    private static final double ENCODER_RESOLUTION = 2048.0;
 
     public Drive(IGyroscopeSensor gyroscope){
 
@@ -65,6 +68,16 @@ public class Drive implements IDrive {
         rightMotorControllerFollow.follow(rightMotorControllerLead);
         middleMotorControllerFollow.follow(middleMotorControllerLead);
 
+        leftEncoder = new TalonEncoder(leftMotorControllerLead);
+        rightEncoder = new TalonEncoder(rightMotorControllerLead);
+
+        double distancePerPulse = (WHEEL_DIAMETER * Math.PI) / ENCODER_RESOLUTION;
+
+        leftEncoder.setDistancePerPulse(distancePerPulse);
+        rightEncoder.setDistancePerPulse(distancePerPulse);
+
+        leftEncoder.setInverted(true);
+
     }
 
     @Override
@@ -73,8 +86,8 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
-
+    public void driveDistance(double distanceInches, double yDirectionSpeed) {
+        driveDistance(distanceInches, yDirectionSpeed, null);
     }
 
     @Override
@@ -83,8 +96,13 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine) {
+    public void driveDistance(double distanceInches, double yDirectionSpeed, Runnable completionRoutine) {
         setCompletionRoutine(completionRoutine);
+        this.yDirectionSpeed = yDirectionSpeed;
+        driveMode = DriveMode.AUTODRIVINGTRAIGHT;
+        this.distanceInches = distanceInches;
+        leftEncoder.reset();
+        rightEncoder.reset();
     }
 
     @Override
@@ -217,7 +235,15 @@ public class Drive implements IDrive {
         if (driveMode == DriveMode.DRIVERCONTROL) {
             manualControlPeriodic();
         } else if (driveMode == DriveMode.AUTODRIVINGTRAIGHT) {
-            throw new IllegalArgumentException("Auto-driving straight is not implemented!");
+            leftMotorControllerLead.set(ControlMode.PercentOutput, yDirectionSpeed);
+            rightMotorControllerLead.set(ControlMode.PercentOutput, yDirectionSpeed);
+            middleMotorControllerLead.set(ControlMode.PercentOutput, 0.0);
+
+            // Check if we've completed our travel
+            double averageDistanceTraveled = (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
+            if (averageDistanceTraveled > distanceInches) {
+                handleActionEnd();
+            }
         } else if (driveMode == DriveMode.AUTOROTATING) {
             throw new IllegalArgumentException("Auto-driving rotation is not implemented!");
         } else if (driveMode == DriveMode.LINEALIGNMENT) {

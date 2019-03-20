@@ -26,8 +26,9 @@ public class Robot extends RobotBase {
         cargoGuide = new CargoGuide();
         lineDetector = new LineDetector();
 
-        disabledMode = new DisabledMode(hook, launcher);
-        autonomousMode = new AutonomousMode(drive, hook);
+        disabledMode = new DisabledMode(hook, launcher, lineDetector);
+        autonomousMode = new HABLineAuto(drive);
+        //autonomousMode = new HatchPanelAuto(drive, hook);
         teleoperatedMode = new TeleoperatedMode(drive, hook, launcher, cargoGuide);
     }
 
