@@ -6,7 +6,7 @@ public class HatchPanelAuto implements IRobotMode {
     private IHook hook;
 
     // correct these values as necessary
-    private final double APPROACH_DISTANCE = 125.0; // inches
+    private final double APPROACH_DISTANCE = 93.0; // inches
     private final double DOCK_DISTANCE = 13.0; // inches
     private final double BACK_OFF_DISTANCE = 25.0; // inches
 
