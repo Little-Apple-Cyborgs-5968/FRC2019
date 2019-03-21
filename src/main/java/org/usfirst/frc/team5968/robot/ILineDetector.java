@@ -1,9 +1,9 @@
-package org.usfirst.frc.team5968.robot; 
-
-//this may or may not stay an interface
+package org.usfirst.frc.team5968.robot;
 
 public interface ILineDetector {
 
     public boolean isOnLine();
+
+    public double getRawValue();
 
 }

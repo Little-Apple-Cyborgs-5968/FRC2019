@@ -7,7 +7,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 public class Drive implements IDrive {
 
     private IGyroscopeSensor gyroscope;
+    private ILineDetector lineDetector;
     private DriveMode driveMode;
+    private IEncoder leftEncoder;
+    private IEncoder rightEncoder;
 
     private TalonSRX leftMotorControllerLead;
     private TalonSRX leftMotorControllerFollow;
@@ -22,9 +25,12 @@ public class Drive implements IDrive {
     private double yDirectionSpeed;
     private double desiredAngle;
     private double rotationSpeed;
+    private double distanceInches;
 
     private static final double DELTA_ANGLE_SPEED_POWER = 1;
     private static final double MAINTAINING_HEADING_SPEED = 1.0;
+    private static final double WHEEL_DIAMETER = 6.0; // inches
+    private static final double ENCODER_RESOLUTION = 2048.0;
 
     public Drive(IGyroscopeSensor gyroscope){
 
@@ -36,6 +42,13 @@ public class Drive implements IDrive {
         rightMotorControllerFollow = new TalonSRX(PortMap.CAN.RIGHT_MOTOR_CONTROLLER_FOLLOW);
         middleMotorControllerLead = new TalonSRX(PortMap.CAN.MIDDLE_MOTOR_CONTROLLER_LEAD);
         middleMotorControllerFollow = new TalonSRX(PortMap.CAN.MIDDLE_MOTOR_CONTROLLER_FOLLOW);
+
+        leftMotorControllerLead.configFactoryDefault();
+        leftMotorControllerFollow.configFactoryDefault();
+        middleMotorControllerLead.configFactoryDefault();
+        middleMotorControllerFollow.configFactoryDefault();
+        rightMotorControllerLead.configFactoryDefault();
+        rightMotorControllerFollow.configFactoryDefault();
 
         leftMotorControllerLead.setNeutralMode(NeutralMode.Brake);
         leftMotorControllerFollow.setNeutralMode(NeutralMode.Brake);
@@ -55,6 +68,16 @@ public class Drive implements IDrive {
         rightMotorControllerFollow.follow(rightMotorControllerLead);
         middleMotorControllerFollow.follow(middleMotorControllerLead);
 
+        leftEncoder = new TalonEncoder(leftMotorControllerLead);
+        rightEncoder = new TalonEncoder(rightMotorControllerLead);
+
+        double distancePerPulse = (WHEEL_DIAMETER * Math.PI) / ENCODER_RESOLUTION;
+
+        leftEncoder.setDistancePerPulse(distancePerPulse);
+        rightEncoder.setDistancePerPulse(distancePerPulse);
+
+        leftEncoder.setInverted(true);
+
     }
 
     @Override
@@ -63,8 +86,8 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed) {
-
+    public void driveDistance(double distanceInches, double yDirectionSpeed) {
+        driveDistance(distanceInches, yDirectionSpeed, null);
     }
 
     @Override
@@ -73,8 +96,13 @@ public class Drive implements IDrive {
     }
 
     @Override
-    public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine) {
+    public void driveDistance(double distanceInches, double yDirectionSpeed, Runnable completionRoutine) {
         setCompletionRoutine(completionRoutine);
+        this.yDirectionSpeed = yDirectionSpeed;
+        driveMode = DriveMode.AUTODRIVINGTRAIGHT;
+        this.distanceInches = distanceInches;
+        leftEncoder.reset();
+        rightEncoder.reset();
     }
 
     @Override
@@ -85,51 +113,68 @@ public class Drive implements IDrive {
     @Override
     public void driveManual(double xDirectionSpeed, double yDirectionSpeed) {
         setCompletionRoutine(null);
-        driveManualImplementation(xDirectionSpeed, yDirectionSpeed);
-    }
-
-    private void driveManualImplementation(double xDirectionSpeed, double yDirectionSpeed) {
         this.xDirectionSpeed = xDirectionSpeed;
         this.yDirectionSpeed = yDirectionSpeed;
         driveMode = DriveMode.DRIVERCONTROL;
     }
 
-    private void stop() {
-        driveManualImplementation(0.0, 0.0);
+    public void stop() {
+        driveManual(0.0, 0.0);
+        lookAt(0.0, 0.0);
     }
 
     @Override
     public void lookAt(double angle, double speed) {
+        driveMode = DriveMode.DRIVERCONTROL;
         setCompletionRoutine(null);
-
         desiredAngle = MathUtilities.normalizeAngle(angle);
         rotationSpeed = speed;
     }
 
     @Override
     public void maintainHeading() {
+        driveMode = DriveMode.DRIVERCONTROL;
         setCompletionRoutine(null);
         desiredAngle = gyroscope.getYaw();
         rotationSpeed = MAINTAINING_HEADING_SPEED;
     }
 
+    @Override
+    public void driveToLine(double strafeSpeed,Runnable completionRoutine) {
+        setCompletionRoutine(completionRoutine);
+        xDirectionSpeed = strafeSpeed;
+        driveMode = DriveMode.LINEALIGNMENT;
+    }
+
+    @Override
+    public void driveToLine(double strafeSpeed) {
+        driveToLine(strafeSpeed, null);
+    }
+
     private void setCompletionRoutine(Runnable completionRountime) {
         if (currentCompletionRoutine != null) {
-            throw new IllegalStateException("Tried to perform a lift action while one was already in progress!");
+            throw new IllegalStateException("Tried to perform an autonomous action while one was already in progress!");
         }
 
         currentCompletionRoutine = completionRountime;
     }
 
-    @Override
-    public void init() {
-        currentCompletionRoutine = null;
+    private void handleActionEnd() {
+        // Saves currentCompletionRoutine before calling stop() so nothing is cleared
+        Runnable oldCompletionRoutine = currentCompletionRoutine;
+
+        // Stops robot from moving
         stop();
-        gyroscope.resetYaw();
+
+        // Dispatch the completion routin if there is one configured
+        if (oldCompletionRoutine != null) {
+            currentCompletionRoutine = null;
+            oldCompletionRoutine.run();
+        }
+
     }
 
-    @Override
-    public void periodic() {
+    private void manualControlPeriodic() {
         double leftSpeed;
         double rightSpeed;
         double middleSpeed;
@@ -142,11 +187,6 @@ public class Drive implements IDrive {
         leftSpeed = Math.cos(robotDriveAngle) * speedMagnitude * .7;
         rightSpeed = leftSpeed;
         middleSpeed = Math.sin(robotDriveAngle) * speedMagnitude;
-
-        Debug.logPeriodic("---------------------------------------------");
-        //Debug.logPeriodic("controllerAngle: " + MathUtilities.normalizeAngle(fieldAngle));
-        Debug.logPeriodic("      gyroAngle: " + gyroscope.getYaw());
-        //Debug.logPeriodic("robotDriveAngle:" + MathUtilities.normalizeAngle(robotDriveAngle));
 
         // Angular Motion
         if (true) {
@@ -181,5 +221,43 @@ public class Drive implements IDrive {
         leftMotorControllerLead.set(ControlMode.PercentOutput, leftSpeed);
         rightMotorControllerLead.set(ControlMode.PercentOutput, rightSpeed);
         middleMotorControllerLead.set(ControlMode.PercentOutput, middleSpeed);
+    }
+
+    @Override
+    public void init() {
+        currentCompletionRoutine = null;
+        stop();
+        gyroscope.resetYaw();
+    }
+
+    @Override
+    public void periodic() {
+        if (driveMode == DriveMode.DRIVERCONTROL) {
+            manualControlPeriodic();
+        } else if (driveMode == DriveMode.AUTODRIVINGTRAIGHT) {
+            leftMotorControllerLead.set(ControlMode.PercentOutput, yDirectionSpeed);
+            rightMotorControllerLead.set(ControlMode.PercentOutput, yDirectionSpeed);
+            middleMotorControllerLead.set(ControlMode.PercentOutput, 0.0);
+
+            // Check if we've completed our travel
+            double averageDistanceTraveled = (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
+            if (averageDistanceTraveled > distanceInches) {
+                handleActionEnd();
+            }
+        } else if (driveMode == DriveMode.AUTOROTATING) {
+            throw new IllegalArgumentException("Auto-driving rotation is not implemented!");
+        } else if (driveMode == DriveMode.LINEALIGNMENT) {
+            leftMotorControllerLead.set(ControlMode.PercentOutput, 0.0);
+            rightMotorControllerLead.set(ControlMode.PercentOutput, 0.0);
+            middleMotorControllerLead.set(ControlMode.PercentOutput, xDirectionSpeed);
+
+            if (lineDetector.isOnLine()) {
+                handleActionEnd();
+
+            }
+
+        } else {
+            throw new IllegalArgumentException("The drive base controller is in an invalid drive mode.");
+        }
     }
 }

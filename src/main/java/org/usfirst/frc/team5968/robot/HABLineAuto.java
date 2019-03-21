@@ -4,42 +4,20 @@ public class HABLineAuto implements IRobotMode {
 
     private IDrive drive;
 
-    private double robotSpeed;
-    private static final double HIGH = 0.5;
-    private static final double LOW = 0.0;
-
-    private double input;
+    private static final double DRIVE_DISTANCE = 64.0; // inches
+    private static final double DRIVE_SPEED = 0.5;
 
     public HABLineAuto(IDrive drive) {
         this.drive = drive;
-        robotSpeed = LOW;
     }
 
     @Override
     public void init() {
-        robotSpeed = LOW;
-        driveStraight();
+        drive.driveDistance(DRIVE_DISTANCE, DRIVE_SPEED);
     }
 
     @Override
     public void periodic() {
-        if(crossedLine()) {
-            //drive.driveDistance(0, robotSpeed, 6.0, /* Runnable? */);
-            robotSpeed = LOW;
-        }
+    // Nothing to do
     }
-
-    public void driveStraight() {
-        robotSpeed = HIGH;
-        drive.driveManual(0, robotSpeed);
-    }
-
-    private boolean crossedLine() {
-        if(input < 64) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 }

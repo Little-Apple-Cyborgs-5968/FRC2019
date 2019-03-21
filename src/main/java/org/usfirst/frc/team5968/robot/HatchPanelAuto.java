@@ -2,23 +2,29 @@ package org.usfirst.frc.team5968.robot;
 
 public class HatchPanelAuto implements IRobotMode {
 
-    /*private IDrive drive;
+    private IDrive drive;
     private IHook hook;
 
-    private final double ROBOT_SPEED = 0.5; //these values may change
-    private final double ROTATION_SPEED = 0.3;
+    // correct these values as necessary
+    private final double APPROACH_DISTANCE = 93.0; // inches
+    private final double DOCK_DISTANCE = 13.0; // inches
+    private final double BACK_OFF_DISTANCE = 25.0; // inches
+
+    // Assumes robot is right of the line and needs to go left to get onto the line
+    private final double ALIGNMENT_SPEED_AND_DIRECTION = -1.0;
+
+    private final double APPROACH_SPEED = 0.75;
+    private final double DOCK_SPEED = 0.25;
+    private final double BACK_OFF_SPEED = 0.2;
 
     public HatchPanelAuto(IDrive drive, IHook hook) {
         this.drive = drive;
         this.hook = hook;
-
     }
-*/
 
 @Override
 public void init() {
-    //goStraight();
-
+    drive.driveDistance(APPROACH_DISTANCE, APPROACH_SPEED, () -> andThenAlign());
 }
 
 @Override
@@ -26,37 +32,17 @@ public void periodic() {
 //autonomous doesn't need periodic
 }
 
-/*Step 1: Go straight to Cargo Ship and put panel on
-* drive straight, align with line, use hook to release panel
-*/
-/*
-public void goStraight() {
-    drive.driveDistance(ROBOT_SPEED, ROBOT_SPEED, 100, () -> alignToLine()); //add in values
+public void andThenAlign() {
+    drive.driveToLine(ALIGNMENT_SPEED_AND_DIRECTION, () -> andThenDock());
+}
+
+public void andThenDock() {
+    drive.driveDistance(DOCK_DISTANCE, DOCK_SPEED , () -> andThenReleaseAndBackOff());
+}
+
+public void andThenReleaseAndBackOff() {
     hook.releasePanel();
-
-} */
-
-/*Step 2: Go and get panel from Loading Station
-* turn around approx. 135 degrees, drive straight, grab panel
-*/
-/*
-public void goDiagonalLeft() {
-    drive.rotateDegrees(135, ROTATION_SPEED);
-    drive.driveDistance(ROBOT_SPEED, ROBOT_SPEED, 100, () -> alignToLine()); //add in values
-    hook.grabPanel();
-
-} */
-
-/*Step 3: Go to Cargo Ship and put panel on
-*turn around approx. -135 degrees, drive straight, go farther,
-*find other line, align with line, use hook to release panel
-*/
-/*
-public void goDiagonalRight() {
-    drive.rotateDegrees(-135, ROTATION_SPEED);
-    drive.driveDistance(ROBOT_SPEED, ROBOT_SPEED, 100, () -> alignToLine()); //add in values
-    hook.releasePanel();
-
-} */
+    drive.driveDistance(BACK_OFF_DISTANCE, BACK_OFF_SPEED);
+}
 
 }

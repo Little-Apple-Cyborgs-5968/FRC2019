@@ -4,14 +4,14 @@ public interface IDrive {
 
     public DriveMode getCurrentDriveMode();
 
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed);
+    public void driveDistance(double distanceInches, double yDirectionSpeed);
 
     public void rotateDegrees(double angle, double angularSpeed);
 
     /*
      * completionRoutine is called when the current action has been completed
      */
-    public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine);
+    public void driveDistance(double distanceInches, double yDirectionSpeed, Runnable completionRoutine);
 
     public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine);
 
@@ -22,6 +22,14 @@ public interface IDrive {
 
     public void lookAt(double angle, double speed);
 
+    public void maintainHeading(); /* Called if stick position is lower than threshold */
+
+    public void driveToLine(double strafeSpeed,Runnable completionRoutine);
+
+    public void driveToLine(double strafeSpeed);
+
+    public void stop();
+
     public void init();
 
     /*
@@ -29,7 +37,5 @@ public interface IDrive {
      * the driveDistance() and rotateDegrees() methods
      */
     public void periodic();
-
-    public void maintainHeading(); /* Called if stick position is lower than threshold */
 
 }

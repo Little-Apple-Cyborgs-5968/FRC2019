@@ -8,7 +8,7 @@ public class NullDrive implements IDrive {
     }
 
      @Override
-    public void driveDistance(double distanceInches, double xDirectionSpeed, double yDirectionSpeed){
+     public void driveDistance(double distanceInches, double yDirectionSpeed){
 
     }
 
@@ -22,7 +22,7 @@ public class NullDrive implements IDrive {
      */
 
      @Override
-    public void driveDistance(double xDirectionSpeed, double yDirectionSpeed, double distanceInches, Runnable completionRoutine) {
+     public void driveDistance(double distanceInches, double yDirectionSpeed, Runnable completionRoutine) {
 
     }
 
@@ -45,6 +45,27 @@ public class NullDrive implements IDrive {
         Debug.logPeriodic("" + angle);
     }
 
+     /* Called if stick position is lower than threshold */
+     @Override
+     public void maintainHeading() {
+
+     }
+
+    @Override
+    public void driveToLine(double strafeSpeed,Runnable completionRoutine) {
+
+    }
+
+    @Override
+    public void driveToLine(double strafeSpeed) {
+
+    }
+
+    @Override
+    public void stop() {
+
+    }
+
     @Override
     public void init() {
 
@@ -57,12 +78,6 @@ public class NullDrive implements IDrive {
 
     @Override
     public void periodic(){
-
-    }
-
-    /* Called if stick position is lower than threshold */
-    @Override
-    public void maintainHeading() {
 
     }
 }
