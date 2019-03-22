@@ -22,7 +22,9 @@ public class TeleoperatedMode implements IRobotMode {
 
     private static final double LINE_ALIGNMENT_SPEED = 0.5;
 
-    public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher, ICargoGuide cargoGuide) {
+    private boolean lastUpdateWasPanic = false;
+
+    public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher, ICargoGuide cargoGuide, IGyroscopeSensor gyroscope) {
 
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
@@ -30,6 +32,7 @@ public class TeleoperatedMode implements IRobotMode {
         this.hook = hook;
         this.launcher = launcher;
         this.cargoGuide = cargoGuide;
+        this.gyroscope = gyroscope;
     }
 
     @Override
@@ -43,8 +46,11 @@ public class TeleoperatedMode implements IRobotMode {
         boolean playerPanic = xboxController.getBackButton() && xboxController.getStartButton();
 
         if (playerPanic) {
-            Debug.logPeriodic("Panic-resetting orientation!");
-            gyroscope.resetYaw();
+            if(!lastUpdateWasPanic) {
+                Debug.log("Panic-resetting orientation!");
+                gyroscope.resetYaw();
+            }
+            lastUpdateWasPanic = true;
 
             // Makes sure robot doesn't use old drive state
             drive.stop();
@@ -52,13 +58,11 @@ public class TeleoperatedMode implements IRobotMode {
             // Skips controls processing
             return;
         }
+        lastUpdateWasPanic = false;
 
         // Process Linear Motion Controls
-        double rightX = xboxController.getX(Hand.kRight);
-        double rightY = -xboxController.getY(Hand.kRight);
         double leftX = xboxController.getX(Hand.kLeft);
         double leftY = -xboxController.getY(Hand.kLeft);
-        double angle = (Math.atan2(rightY, rightX) + (Math.PI / 2));
         double leftMagnitude = Math.sqrt(Math.pow(leftX, 2.0) + Math.pow(leftY, 2.0));
 
         if (leftMagnitude < LEFT_STICK_TOLERANCE) {
@@ -78,6 +82,9 @@ public class TeleoperatedMode implements IRobotMode {
         drive.driveManual(leftX, leftY);
 
         // Process Angular Motion Controls
+        double rightX = xboxController.getX(Hand.kRight);
+        double rightY = xboxController.getY(Hand.kRight);
+        double angle = (Math.atan2(rightY, rightX) + (Math.PI / 2));
         double rotationSpeed = Math.sqrt(Math.pow(rightX, 2.0) + Math.pow(rightY, 2.0));
 
         if (rotationSpeed < ROTATION_SPEED_THRESHOLD) {
@@ -87,7 +94,7 @@ public class TeleoperatedMode implements IRobotMode {
             }
         } else {
             rotationSpeed = Math.pow(rotationSpeed, RIGHT_STICK_EXPONENT);
-            drive.lookAt(angle, leftMagnitude);
+            drive.lookAt(angle, rotationSpeed);
             headingIsMaintained = false;
         }
 
@@ -116,12 +123,12 @@ public class TeleoperatedMode implements IRobotMode {
 
         // Process Line Alignment
         final int RIGHT = 90;
-        final int LEFT = 90;
+        final int LEFT = 270;
 
         if (xboxController.getPOV() == LEFT) {
-            drive.driveToLine(-LINE_ALIGNMENT_SPEED);
-        } else if (xboxController.getPOV() == RIGHT) {
             drive.driveToLine(LINE_ALIGNMENT_SPEED);
+        } else if (xboxController.getPOV() == RIGHT) {
+            drive.driveToLine(-LINE_ALIGNMENT_SPEED);
         }
     }
 }

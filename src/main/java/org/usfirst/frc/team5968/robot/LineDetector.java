@@ -4,20 +4,18 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 public class LineDetector implements ILineDetector {
 
-    private ILineDetector lineDetector;
     private AnalogInput analogInput;
 
-    private static final double LINE_THRESHOLD = 1.45;
+    private static final double LINE_THRESHOLD = 3.5;
 
     public LineDetector() {
         analogInput = new AnalogInput(0);
-        lineDetector = new LineDetector();
     }
 
     @Override
     public boolean isOnLine() {
 
-        if (lineDetector.getRawValue() > LINE_THRESHOLD) {
+        if (getRawValue() > LINE_THRESHOLD) {
             return true;
         } else {
             return false;

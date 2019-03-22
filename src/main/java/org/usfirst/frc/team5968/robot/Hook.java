@@ -12,7 +12,7 @@ public class Hook implements IHook {
     public Hook (){
         compressor = new Compressor(PortMap.CAN.PCM);
         compressor.setClosedLoopControl(true);
-        piston = new DoubleSolenoid(2,3);
+        piston = new DoubleSolenoid(3, 2);
         releasePanel();
     }
 

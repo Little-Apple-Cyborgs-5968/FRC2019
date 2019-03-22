@@ -10,6 +10,7 @@ public class NavXMXP implements IGyroscopeSensor {
     public NavXMXP() {
         Debug.log("Start");
         navX = new AHRS(SerialPort.Port.kUSB);
+        navX.enableBoardlevelYawReset(false);
         navX.reset();
     }
     
