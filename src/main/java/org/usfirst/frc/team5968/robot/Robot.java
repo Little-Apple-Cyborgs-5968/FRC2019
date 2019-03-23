@@ -28,9 +28,10 @@ public class Robot extends RobotBase {
         drive = new Drive(gyroscope, lineDetector);
 
         disabledMode = new DisabledMode(hook, launcher, lineDetector);
-        //autonomousMode = new HABLineAuto(drive);
-        autonomousMode = new HatchPanelAuto(drive, hook);
+        autonomousMode = new HABLineAuto(drive);
+        //autonomousMode = new HatchPanelAuto(drive, hook);
         teleoperatedMode = new TeleoperatedMode(drive, hook, launcher, cargoGuide, gyroscope);
+        //teleoperatedMode = new MotorTest();
     }
 
     @Override

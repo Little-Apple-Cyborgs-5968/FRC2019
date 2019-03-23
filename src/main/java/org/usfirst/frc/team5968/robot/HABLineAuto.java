@@ -4,7 +4,7 @@ public class HABLineAuto implements IRobotMode {
 
     private IDrive drive;
 
-    private static final double DRIVE_DISTANCE = 64.0; // inches
+    private static final double DRIVE_DISTANCE = 120.0; // inches
     private static final double DRIVE_SPEED = 0.5;
 
     public HABLineAuto(IDrive drive) {
