@@ -11,6 +11,7 @@ public class TeleoperatedMode implements IRobotMode {
     private IHook hook;
     private ILauncher launcher;
     private ICargoGuide cargoGuide;
+    private ICompressor compressor;
 
     private boolean headingIsMaintained = true;
 
@@ -24,7 +25,9 @@ public class TeleoperatedMode implements IRobotMode {
 
     private boolean lastUpdateWasPanic = false;
 
-    public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher, ICargoGuide cargoGuide, IGyroscopeSensor gyroscope) {
+    private boolean lastManualCompressor = false;
+
+    public TeleoperatedMode(IDrive drive, IHook hook, ILauncher launcher, ICargoGuide cargoGuide, IGyroscopeSensor gyroscope, ICompressor compressor) {
 
         xboxController = new XboxController(PortMap.USB.XBOXCONTROLLER);
 
@@ -33,6 +36,7 @@ public class TeleoperatedMode implements IRobotMode {
         this.launcher = launcher;
         this.cargoGuide = cargoGuide;
         this.gyroscope = gyroscope;
+        this.compressor = compressor;
     }
 
     @Override
@@ -103,6 +107,16 @@ public class TeleoperatedMode implements IRobotMode {
             launcher.start();
         } else {
             launcher.stop();
+        }
+
+        boolean manualCompressor = xboxController.getBumper(Hand.kLeft);
+        if (manualCompressor != lastManualCompressor && false) {
+            if (manualCompressor) {
+                compressor.enable();
+            } else {
+                compressor.disable();
+            }
+            lastManualCompressor = manualCompressor;
         }
 
         if (xboxController.getYButton()) {

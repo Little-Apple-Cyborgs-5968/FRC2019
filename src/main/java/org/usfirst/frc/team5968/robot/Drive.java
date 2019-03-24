@@ -190,6 +190,11 @@ public class Drive implements IDrive {
         rightSpeed = leftSpeed;
         middleSpeed = Math.sin(robotDriveAngle) * speedMagnitude;
 
+        // Reduce power draw at competition
+        //leftSpeed *= .75;
+        //rightSpeed *= .75;
+        //middleSpeed *= .75;
+
         // Angular Motion
         if (true) {
             double deltaAngle = gyroscope.getYaw() - desiredAngle;
