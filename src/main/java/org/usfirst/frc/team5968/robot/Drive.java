@@ -3,6 +3,7 @@ package org.usfirst.frc.team5968.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Drive implements IDrive {
 
@@ -32,9 +33,10 @@ public class Drive implements IDrive {
     private static final double WHEEL_DIAMETER = 6.0; // inches
     private static final double ENCODER_RESOLUTION = 2048.0;
 
-    public Drive(IGyroscopeSensor gyroscope){
+    public Drive(IGyroscopeSensor gyroscope, ILineDetector lineDetector){
 
         this.gyroscope = gyroscope;
+        this.lineDetector = lineDetector;
 
         leftMotorControllerLead = new TalonSRX(PortMap.CAN.LEFT_MOTOR_CONTROLLER_LEAD);
         leftMotorControllerFollow = new TalonSRX(PortMap.CAN.LEFT_MOTOR_CONTROLLER_FOLLOW);
@@ -68,8 +70,8 @@ public class Drive implements IDrive {
         rightMotorControllerFollow.follow(rightMotorControllerLead);
         middleMotorControllerFollow.follow(middleMotorControllerLead);
 
-        leftEncoder = new TalonEncoder(leftMotorControllerLead);
-        rightEncoder = new TalonEncoder(rightMotorControllerLead);
+        leftEncoder = new TalonEncoder(leftMotorControllerFollow);
+        rightEncoder = new TalonEncoder(rightMotorControllerFollow);
 
         double distancePerPulse = (WHEEL_DIAMETER * Math.PI) / ENCODER_RESOLUTION;
 
@@ -107,7 +109,7 @@ public class Drive implements IDrive {
 
     @Override
     public void rotateDegrees(double relativeAngle, double angularSpeed, Runnable completionRoutine) {
-
+        
     }
 
     @Override
@@ -188,18 +190,24 @@ public class Drive implements IDrive {
         rightSpeed = leftSpeed;
         middleSpeed = Math.sin(robotDriveAngle) * speedMagnitude;
 
+        // Reduce power draw at competition
+        //leftSpeed *= .75;
+        //rightSpeed *= .75;
+        //middleSpeed *= .75;
+
         // Angular Motion
         if (true) {
             double deltaAngle = gyroscope.getYaw() - desiredAngle;
 
-            Debug.logPeriodic(" desiredAngle: " + desiredAngle);
-            Debug.logPeriodic(" deltaAngle1: " + deltaAngle);
+            //Debug.logPeriodic(" desiredAngle: " + desiredAngle);
+            //Debug.logPeriodic(" deltaAngle1: " + deltaAngle);
 
             if (Math.abs(deltaAngle) > Math.PI) {
                 deltaAngle -= (Math.PI * 2) * Math.signum(deltaAngle);
             }
 
-            Debug.logPeriodic(" deltaAngle2: " + deltaAngle);
+            //Debug.logPeriodic(" deltaAngle2: " + deltaAngle);
+            Debug.logPeriodic("Yaw: " + gyroscope.getYaw());
 
             double actualSpeed = rotationSpeed * Math.pow(Math.abs(deltaAngle) / Math.PI, DELTA_ANGLE_SPEED_POWER);
             leftSpeed *= 1 - actualSpeed;
@@ -214,7 +222,7 @@ public class Drive implements IDrive {
                 rightSpeed += actualSpeed;
             }
 
-            Debug.logPeriodic(" actualSpeed: " + actualSpeed);
+            //Debug.logPeriodic(" actualSpeed: " + actualSpeed);
         }
 
         // Set Motor Speeds
@@ -227,11 +235,16 @@ public class Drive implements IDrive {
     public void init() {
         currentCompletionRoutine = null;
         stop();
-        gyroscope.resetYaw();
+        if(DriverStation.getInstance().isAutonomous()) {
+            gyroscope.resetYaw();
+        }
     }
 
     @Override
     public void periodic() {
+        //Debug.logPeriodic("Left Encoder: " + leftEncoder.getDistance());
+        //Debug.logPeriodic("Right Encoder: " + rightEncoder.getDistance());
+
         if (driveMode == DriveMode.DRIVERCONTROL) {
             manualControlPeriodic();
         } else if (driveMode == DriveMode.AUTODRIVINGTRAIGHT) {
@@ -240,7 +253,7 @@ public class Drive implements IDrive {
             middleMotorControllerLead.set(ControlMode.PercentOutput, 0.0);
 
             // Check if we've completed our travel
-            double averageDistanceTraveled = (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
+            double averageDistanceTraveled = Math.abs((leftEncoder.getDistance() + rightEncoder.getDistance()) / 2);
             if (averageDistanceTraveled > distanceInches) {
                 handleActionEnd();
             }

@@ -11,11 +11,11 @@ public class HatchPanelAuto implements IRobotMode {
     private final double BACK_OFF_DISTANCE = 25.0; // inches
 
     // Assumes robot is right of the line and needs to go left to get onto the line
-    private final double ALIGNMENT_SPEED_AND_DIRECTION = -1.0;
+    private final double ALIGNMENT_SPEED_AND_DIRECTION = 0.5;
 
     private final double APPROACH_SPEED = 0.75;
     private final double DOCK_SPEED = 0.25;
-    private final double BACK_OFF_SPEED = 0.2;
+    private final double BACK_OFF_SPEED = -0.2;
 
     public HatchPanelAuto(IDrive drive, IHook hook) {
         this.drive = drive;

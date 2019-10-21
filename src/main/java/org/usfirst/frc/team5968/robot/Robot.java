@@ -17,19 +17,23 @@ public class Robot extends RobotBase {
     private ICargoGuide cargoGuide;
     private IGyroscopeSensor gyroscope;
     private ILineDetector lineDetector;
+    private ICompressor compressor;
 
     public Robot() {
         gyroscope = new NavXMXP();
-        drive = new Drive(gyroscope);
+        //drive = new NullDrive();
         hook = new Hook();
         launcher = new Launcher();
         cargoGuide = new CargoGuide();
         lineDetector = new LineDetector();
+        drive = new Drive(gyroscope, lineDetector);
+        compressor = new Compressor();
 
         disabledMode = new DisabledMode(hook, launcher, lineDetector);
         autonomousMode = new HABLineAuto(drive);
         //autonomousMode = new HatchPanelAuto(drive, hook);
-        teleoperatedMode = new TeleoperatedMode(drive, hook, launcher, cargoGuide);
+        teleoperatedMode = new TeleoperatedMode(drive, hook, launcher, cargoGuide, gyroscope, compressor);
+        //teleoperatedMode = new MotorTest();
     }
 
     @Override
@@ -61,6 +65,7 @@ public class Robot extends RobotBase {
         drive.init();
         hook.init();
         launcher.init();
+        compressor.init();
     }
 
     private void doPeripheralPeriodicProcessing() {

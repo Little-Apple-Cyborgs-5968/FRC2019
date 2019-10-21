@@ -1,5 +1,12 @@
 [
   {
+    "artifact": "frcJava (in project FRC2019-Competition)",
+    "target": "roborio",
+    "debugfile": "frcJava_roborio.debugconfig",
+    "project": "FRC2019-Competition",
+    "language": "java"
+  },
+  {
     "artifact": "frcJava (in project FRC2019)",
     "target": "roborio",
     "debugfile": "frcJava_roborio.debugconfig",
