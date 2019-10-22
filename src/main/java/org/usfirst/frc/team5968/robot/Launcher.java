@@ -7,8 +7,11 @@ public class Launcher implements ILauncher
 {
 
     private TalonSRX launcherMotor;
+    private DigitalInput bottomSwitch;
+    private DigitalInput topSwitch;
 
     private double motorSpeed;
+    public boolean isAuto;
     private static final double HIGH = 0.9;
     private static final double LOW = 0.0;
 
@@ -16,7 +19,11 @@ public class Launcher implements ILauncher
         launcherMotor = new TalonSRX(PortMap.CAN.CONVEYER_MOTOR_CONTROLLER);
         launcherMotor.setInverted(true);
 
+        bottomSwitch = new DigitalInput(9);
+        topSwitch = new DigitalInput(8);
+
         stop();
+        isAuto = false;
     }
 
     @Override
@@ -32,10 +39,27 @@ public class Launcher implements ILauncher
     @Override
     public void init() {
         stop();
+        isAuto = false;
+    }
+
+    public void bottomSwitchActivated() {
+        start();
+        isAuto = true;
+    }
+
+    public void topSwitchActivated() {
+        stop();
+        isAuto = false;
     }
     
     @Override
     public void periodic() {
         launcherMotor.set(ControlMode.PercentOutput, motorSpeed);
+
+        if(bottomSwitch.get() && !isAuto()) {
+            bottomSwitchActivated();
+        } else if(topSwitch.get()) {
+            topSwitchActivated();
+        }
     }
 }

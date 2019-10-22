@@ -104,7 +104,12 @@ public class TeleoperatedMode implements IRobotMode {
 
         // Process Peripheral Controls
         if (xboxController.getBumper(Hand.kRight)) {
-            launcher.start();
+            if(launcher.isAuto) {
+                launcher.stop();
+                launcher.isAuto = false;
+            } else {
+                launcher.start();
+            }
         } else {
             launcher.stop();
         }
