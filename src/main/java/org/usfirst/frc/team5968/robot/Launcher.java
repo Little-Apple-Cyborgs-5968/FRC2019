@@ -24,17 +24,18 @@ public class Launcher implements ILauncher
         topSwitch = new DigitalInput(8);
 
         stop();
+        isAuto = false;
     }
 
     @Override
     public void stop() {
         motorSpeed = LOW;
-        isAuto = false;
     }
 
     @Override
     public void start() {
         motorSpeed = HIGH;
+        isAuto = false;
     }
 
     @Override
@@ -44,13 +45,12 @@ public class Launcher implements ILauncher
 
     @Override
     public void periodic() {
-        launcherMotor.set(ControlMode.PercentOutput, motorSpeed);
-
-        if(bottomSwitch.get() && !isAuto()) {
-            start();
+        if(bottomSwitch.get() && !isAuto) {
             isAuto = true;
         } else if(topSwitch.get()) {
-            stop();
+            isAuto = false;
         }
+
+        launcherMotor.set(ControlMode.PercentOutput, isAuto ? HIGH : motorSpeed);
     }
 }
