@@ -45,9 +45,9 @@ public class Launcher implements ILauncher
 
     @Override
     public void periodic() {
-        if(bottomSwitch.get() && !isAuto) {
+        if(!bottomSwitch.get() && !isAuto) {
             isAuto = true;
-        } else if(topSwitch.get()) {
+        } else if(!topSwitch.get()) {
             isAuto = false;
         }
 
